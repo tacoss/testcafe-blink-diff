@@ -9,15 +9,21 @@ const pkgInfo = require('./package.json');
 
 const USAGE_INFO = `
 Usage:
-  ${pkgInfo.name} [SCREENSHOTS_DIRECTORY] [--open] [--force]
+  ${pkgInfo.name} [SCREENSHOTS_DIRECTORY] [OUTPUT_DIRECTORY]
+
+Options:
+  -o, --open       Browse generated report
+  -f, --force      Ignore missing screenshots
+  -t, --threshold  Percentage of difference expected
 
 Snapshots:
 
-- Import and call \`await snapshot(t)\` within your tests, e.g. \`import { snapshot } from '${pkgInfo.name}';\`
-- Run testcafe with \`--snapshot\` to take the base screenshots, run again without \`--snapshot\` to take actual screenshots
-- Run ${pkgInfo.name} to generate a report from the taken screenshots, e.g. \`npx ${pkgInfo.name} tests/screenshots --open\`
+- Import and call \`await takeSnapshot(t)\` within your tests, e.g. \`import { takeSnapshot } from '${pkgInfo.name}';\`
+- Run testcafe with \`--take-snapshot\` to take the base screenshots, run again without \`--take-snapshot\` to take actual screenshots
+- Run ${pkgInfo.name} to generate a report from the taken screenshots, e.g. \`npx ${pkgInfo.name} tests/screenshots --open --threshold 0.2\`
 `;
 
+const cwd = process.cwd();
 const argv = wargs(process.argv.slice(2), {
   alias: {
     v: 'version',
@@ -36,15 +42,18 @@ if (!argv._.length) {
   process.exit();
 }
 
-const imagesPath = path.resolve(process.argv.slice(2)[0] || 'screenshots');
+const imagesPath = path.resolve(argv._[0] || 'screenshots');
+const destPath = path.resolve(argv._[1] || 'generated');
+
+const ratio = parseFloat(argv.flags.threshold || '0.01');
 
 console.log('Collecting screenshots...');
 
 const images = glob
   .sync('**/*.png', { cwd: imagesPath })
-  .filter(x => x.indexOf('thumbnails') === -1 && x.indexOf('_out.png') === -1)
+  .filter(x => x.indexOf('thumbnails') === -1 && x.indexOf('out.png') === -1)
   .reduce((prev, cur) => {
-    const groupedName = cur.match(/_(actual|base)\.png$/);
+    const groupedName = cur.match(/\/(actual|base)\.png$/);
     const fixedName = cur.replace(groupedName[0], '')
       .replace('__or__', '/')
       .replace(/_/g, ' ');
@@ -58,8 +67,9 @@ const images = glob
     return prev;
   }, {});
 
-// FIXME: extract this from ARGV
-const ratio = parseFloat(process.env.THRESHOLD_PERCENT || '0.01');
+function readFile(filename) {
+  return fs.readFileSync(`${__dirname}/${filename}`).toString();
+}
 
 function build() {
   const data = [];
@@ -68,7 +78,7 @@ function build() {
     if (!(images[groupedName].base && images[groupedName].actual)) {
       const errorMessage = `Missing snapshots for '${groupedName}'`;
 
-      if (process.argv.slice(2).indexOf('--force') === -1) {
+      if (argv.flags.force) {
         throw new Error(errorMessage);
       }
 
@@ -77,6 +87,11 @@ function build() {
     }
 
     console.log(`  Processing '${groupedName}' ...`); // eslint-disable-line
+
+    const actualImage = path.relative(imagesPath, images[groupedName].actual);
+    const baseImage = path.relative(imagesPath, images[groupedName].base);
+    const baseDir = path.dirname(actualImage);
+    const outFile = path.join(baseDir, 'out.png');
 
     const diff = new BlinkDiff({
       imageAPath: images[groupedName].base,
@@ -88,7 +103,7 @@ function build() {
       // FIXME: reduce usage of this by improving the UI?
       // composition: false,
 
-      imageOutputPath: images[groupedName].base.replace('_base.png', '_out.png'),
+      imageOutputPath: outFile,
     });
 
     data.push(new Promise((resolve, reject) => {
@@ -96,19 +111,15 @@ function build() {
         if (error) {
           reject(error);
         } else {
-          const actualImage = path.relative(imagesPath, images[groupedName].actual);
-          const baseImage = path.relative(imagesPath, images[groupedName].base);
-          const baseDir = path.dirname(actualImage);
-
           resolve({
             thumbnails: {
-              actual: `${baseDir === '.' ? '' : `${baseDir}/`}thumbnails/${path.basename(actualImage)}`,
-              base: `${baseDir === '.' ? '' : `${baseDir}/`}thumbnails/${path.basename(baseImage)}`,
+              actual: path.join(baseDir === '.' ? '' : baseDir, `thumbnails/${path.basename(actualImage)}`),
+              base: path.join(baseDir === '.' ? '' : baseDir, `thumbnails/${path.basename(baseImage)}`),
             },
             images: {
               actual: actualImage,
               base: baseImage,
-              out: baseImage.replace('_base.png', '_out.png'),
+              out: outFile,
             },
             label: groupedName,
             diff: result.differences,
@@ -123,22 +134,22 @@ function build() {
 }
 
 function render(reportInfo) {
-  return fs.readFileSync(`${__dirname}/index.html`).toString()
+  return readFile('index.html')
     .replace('{json}', JSON.stringify(reportInfo))
-    .replace('{code}', `!function() { ${fs.readFileSync(`${__dirname}/report.js`)} }()`);
+    .replace('{code}', `!function() { ${readFile('report.js')} }()`);
 }
 
 Promise.resolve()
   .then(() => build())
   .then(results => {
-    const destFile = `${imagesPath}/index.html`;
+    const destFile = `${destPath}/index.html`;
 
     fs.writeFileSync(destFile, render(results));
 
-    console.log(`Write ${path.relative(process.cwd(), destFile)}`); // eslint-disable-line
+    console.log(`Write ${path.relative(cwd, destFile)}`); // eslint-disable-line
 
-    if (process.argv.slice(2).indexOf('--open') !== -1) {
-      open(destFile);
+    if (argv.flags.open) {
+      open(destFile, typeof argv.flags.open === 'string' ? argv.flags.open : undefined);
     }
   })
   .catch(e => {
