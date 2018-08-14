@@ -5,6 +5,8 @@ const fs = require('fs');
 
 const imagesPath = path.resolve(process.argv.slice(2)[0] || 'screenshots');
 
+console.log('Processing screenshots...');
+
 const images = glob
   .sync('**/*.png', { cwd: imagesPath })
   .filter(x => !x.includes('thumbnails') && !x.includes('_out.png'))
@@ -77,5 +79,9 @@ function render(reportInfo) {
 
 Promise.all(data)
   .then(results => {
-    fs.writeFileSync(`${imagesPath}/index.html`, render(results));
+    const destFile = `${imagesPath}/index.html`;
+
+    fs.writeFileSync(destFile, render(results));
+
+    console.log(`Write ${path.relative(process.cwd(), destFile)}`); // eslint-disable-line
   });
