@@ -45,7 +45,7 @@ Object.keys(images).forEach(groupedName => {
     // FIXME: reduce usage of this by improving the UI?
     // composition: false,
 
-    imageOutputPath: images[groupedName].base.replace('_base.png', '_out.png')
+    imageOutputPath: images[groupedName].base.replace('_base.png', '_out.png'),
   });
 
   data.push(new Promise((resolve, reject) => {
@@ -65,7 +65,7 @@ Object.keys(images).forEach(groupedName => {
           },
           label: groupedName,
           diff: result.differences,
-          ok: diff.hasPassed(result.code)
+          ok: diff.hasPassed(result.code),
         });
       }
     });
