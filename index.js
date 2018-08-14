@@ -8,5 +8,5 @@ function snapshot(t, label) {
 }
 
 module.exports = {
-  snaphost,
+  snapshot,
 };
