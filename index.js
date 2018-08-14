@@ -1,8 +1,13 @@
-// FIXME: implement blockOut, e.g. take a list of selectors, retrieve their coordinates, and remap
+const suffix = (process.env.SNAPSHOT || process.argv.slice(2).indexOf('--snapshot') !== -1) ? 'base' : 'actual';
 
+function normalize(value) {
+  return value.replace(/\W+/g, '_');
+}
+
+// FIXME: implement blockOut, e.g. take a list of selectors, retrieve their coordinates, and remap
 function snapshot(t, label) {
-  const suffix = (process.env.SNAPSHOT || process.argv.slice(2).indexOf('--snapshot') !== -1) ? 'base' : 'actual';
-  const imagePath = `${(label || t.testRun.test.name).replace(/\//g, '__or__').replace(/\W+/g, '_')}_${suffix}.png`;
+  const filename = normalize(label || t.testRun.test.name).replace(/\//g, '__or__');
+  const imagePath = `${normalize(t.testRun.test.fixture.name)}/${filename}_${suffix}.png`;
 
   return t.takeScreenshot(imagePath);
 }
