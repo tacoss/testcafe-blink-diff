@@ -38,7 +38,9 @@ Object.keys(images).forEach(groupedName => {
 
     thresholdType: BlinkDiff.THRESHOLD_PERCENT,
     threshold: ratio,
-    composition: false,
+
+    // FIXME: reduce usage of this by improving the UI?
+    // composition: false,
 
     imageOutputPath: images[groupedName].base.replace('_base.png', '_out.png')
   });
@@ -70,7 +72,7 @@ Object.keys(images).forEach(groupedName => {
 function render(reportInfo) {
   return fs.readFileSync(`${__dirname}/index.html`).toString()
     .replace('{json}', JSON.stringify(reportInfo))
-    .replace('{code}', fs.readFileSync(`${__dirname}/report.js`));
+    .replace('{code}', `!function() { ${fs.readFileSync(`${__dirname}/report.js`)} }()`);
 }
 
 Promise.all(data)
