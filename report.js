@@ -29,7 +29,7 @@ const ul = tag('ul');
 images.forEach(imageInfo => {
   const diffDetails = tag('div', { class: imageInfo.ok ? 'passed' : 'failed' });
   const isOK = tag('h3', null, imageInfo.ok ? 'It passed.' : 'It did not passed!');
-  const diff = tag('h2', null, `Score: ${imageInfo.diff}`);
+  const diff = tag('h2', null, `Diff: ${imageInfo.diff}`);
 
   function click() {
     window.open(imageInfo.images.out);
