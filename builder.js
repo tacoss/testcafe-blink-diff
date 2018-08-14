@@ -27,50 +27,54 @@ const images = glob
   }, {});
 
 const ratio = parseFloat(process.env.THRESHOLD_PERCENT || '0.01');
-const data = [];
 
-Object.keys(images).forEach(groupedName => {
-  if (!images[groupedName].actual) {
-    console.warn(`Missing actual snapshot for '${groupedName}'`); // eslint-disable-line
-    return;
-  }
+function build() {
+  const data = [];
 
-  const diff = new BlinkDiff({
-    imageAPath: images[groupedName].base,
-    imageBPath: images[groupedName].actual,
+  Object.keys(images).forEach(groupedName => {
+    if (!(images[groupedName].base && images[groupedName].actual)) {
+      throw new Error(`Missing snapshots for '${groupedName}'`);
+    }
 
-    thresholdType: BlinkDiff.THRESHOLD_PERCENT,
-    threshold: ratio,
+    const diff = new BlinkDiff({
+      imageAPath: images[groupedName].base,
+      imageBPath: images[groupedName].actual,
 
-    // FIXME: reduce usage of this by improving the UI?
-    // composition: false,
+      thresholdType: BlinkDiff.THRESHOLD_PERCENT,
+      threshold: ratio,
 
-    imageOutputPath: images[groupedName].base.replace('_base.png', '_out.png'),
+      // FIXME: reduce usage of this by improving the UI?
+      // composition: false,
+
+      imageOutputPath: images[groupedName].base.replace('_base.png', '_out.png'),
+    });
+
+    data.push(new Promise((resolve, reject) => {
+      diff.run((error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve({
+            thumbnails: {
+              actual: `thumbnails/${path.relative(imagesPath, images[groupedName].actual)}`,
+              base: `thumbnails/${path.relative(imagesPath, images[groupedName].base)}`,
+            },
+            images: {
+              actual: path.relative(imagesPath, images[groupedName].actual),
+              base: path.relative(imagesPath, images[groupedName].base),
+              out: path.relative(imagesPath, images[groupedName].base.replace('_base.png', '_out.png')),
+            },
+            label: groupedName,
+            diff: result.differences,
+            ok: diff.hasPassed(result.code),
+          });
+        }
+      });
+    }));
   });
 
-  data.push(new Promise((resolve, reject) => {
-    diff.run((error, result) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve({
-          thumbnails: {
-            actual: `thumbnails/${path.relative(imagesPath, images[groupedName].actual)}`,
-            base: `thumbnails/${path.relative(imagesPath, images[groupedName].base)}`,
-          },
-          images: {
-            actual: path.relative(imagesPath, images[groupedName].actual),
-            base: path.relative(imagesPath, images[groupedName].base),
-            out: path.relative(imagesPath, images[groupedName].base.replace('_base.png', '_out.png')),
-          },
-          label: groupedName,
-          diff: result.differences,
-          ok: diff.hasPassed(result.code),
-        });
-      }
-    });
-  }));
-});
+  return Promise.all(data);
+}
 
 function render(reportInfo) {
   return fs.readFileSync(`${__dirname}/index.html`).toString()
@@ -78,7 +82,8 @@ function render(reportInfo) {
     .replace('{code}', `!function() { ${fs.readFileSync(`${__dirname}/report.js`)} }()`);
 }
 
-Promise.all(data)
+Promise.resolve()
+  .then(() => build())
   .then(results => {
     const destFile = `${imagesPath}/index.html`;
 
@@ -89,4 +94,8 @@ Promise.all(data)
     if (process.argv.slice(2).indexOf('--open') !== -1) {
       open(destFile);
     }
+  })
+  .catch(e => {
+    console.error(e.message); // eslint-disable-line
+    process.exit(1);
   });
