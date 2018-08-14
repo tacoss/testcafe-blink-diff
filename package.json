@@ -6,6 +6,13 @@
   "bin": {
     "testcafe-blink-diff": "bin"
   },
+  "files": [
+    "bin",
+    "index.js",
+    "report.js",
+    "builder.js",
+    "index.html"
+  ],
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
   "dependencies": {
