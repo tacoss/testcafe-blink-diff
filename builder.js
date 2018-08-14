@@ -4,6 +4,26 @@ const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
 
+const pkgInfo = require('./package.json');
+
+const USAGE_INFO = `
+${pkgInfo.name} v${pkgInfo.version}
+
+Usage:
+  ${pkgInfo.name} [SCREENSHOTS_DIRECTORY] [--open]
+
+Snapshots:
+
+- Import and call \`await snapshot(t)\` within your tests, e.g. \`import { snapshot } from '${pkgInfo.name}';\`
+- Run testcafe with \`--snapshot\` to take the base screenshots, run again without \`--snapshot\` to take actual screenshots
+- Run ${pkgInfo.name} to generate a report from the taken screenshots, e.g. \`npx ${pkgInfo.name} tests/screenshots --open\`
+`;
+
+if (!process.argv.slice(2).length) {
+  console.log(USAGE_INFO);
+  process.exit();
+}
+
 const imagesPath = path.resolve(process.argv.slice(2)[0] || 'screenshots');
 
 console.log('Processing screenshots...');
