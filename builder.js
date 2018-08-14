@@ -10,7 +10,7 @@ const USAGE_INFO = `
 ${pkgInfo.name} v${pkgInfo.version}
 
 Usage:
-  ${pkgInfo.name} [SCREENSHOTS_DIRECTORY] [--open]
+  ${pkgInfo.name} [SCREENSHOTS_DIRECTORY] [--open] [--force]
 
 Snapshots:
 
@@ -26,7 +26,7 @@ if (!process.argv.slice(2).length) {
 
 const imagesPath = path.resolve(process.argv.slice(2)[0] || 'screenshots');
 
-console.log('Processing screenshots...');
+console.log('Collecting screenshots...');
 
 const images = glob
   .sync('**/*.png', { cwd: imagesPath })
@@ -53,8 +53,17 @@ function build() {
 
   Object.keys(images).forEach(groupedName => {
     if (!(images[groupedName].base && images[groupedName].actual)) {
-      throw new Error(`Missing snapshots for '${groupedName}'`);
+      const errorMessage = `Missing snapshots for '${groupedName}'`;
+
+      if (process.argv.slice(2).indexOf('--force') === -1) {
+        throw new Error(errorMessage);
+      }
+
+      console.warn(errorMessage); // eslint-disable-line
+      return;
     }
+
+    console.log(`  Processing '${groupedName}' ...`); // eslint-disable-line
 
     const diff = new BlinkDiff({
       imageAPath: images[groupedName].base,
