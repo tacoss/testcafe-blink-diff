@@ -46,6 +46,7 @@ const images = glob
     return prev;
   }, {});
 
+// FIXME: extract this from ARGV
 const ratio = parseFloat(process.env.THRESHOLD_PERCENT || '0.01');
 
 function build() {

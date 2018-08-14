@@ -5,11 +5,11 @@ function normalize(value) {
 }
 
 // FIXME: implement blockOut, e.g. take a list of selectors, retrieve their coordinates, and remap
-function snapshot(t, label) {
+function snapshot(t, label, timeout) {
   const filename = normalize(label || t.testRun.test.name).replace(/\//g, '__or__');
   const imagePath = `${normalize(t.testRun.test.fixture.name)}/${filename}_${suffix}.png`;
 
-  return t.takeScreenshot(imagePath);
+  return t.wait(timeout === false ? 0 : (timeout || 500)).takeScreenshot(imagePath);
 }
 
 module.exports = {
