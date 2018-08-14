@@ -84,15 +84,19 @@ function build() {
         if (error) {
           reject(error);
         } else {
+          const actualImage = path.relative(imagesPath, images[groupedName].actual);
+          const baseImage = path.relative(imagesPath, images[groupedName].base);
+          const baseDir = path.dirname(actualImage);
+
           resolve({
             thumbnails: {
-              actual: `thumbnails/${path.relative(imagesPath, images[groupedName].actual)}`,
-              base: `thumbnails/${path.relative(imagesPath, images[groupedName].base)}`,
+              actual: `${baseDir === '.' ? '' : `${baseDir}/`}thumbnails/${path.basename(actualImage)}`,
+              base: `${baseDir === '.' ? '' : `${baseDir}/`}thumbnails/${path.basename(baseImage)}`,
             },
             images: {
-              actual: path.relative(imagesPath, images[groupedName].actual),
-              base: path.relative(imagesPath, images[groupedName].base),
-              out: path.relative(imagesPath, images[groupedName].base.replace('_base.png', '_out.png')),
+              actual: actualImage,
+              base: baseImage,
+              out: baseImage.replace('_base.png', '_out.png'),
             },
             label: groupedName,
             diff: result.differences,
