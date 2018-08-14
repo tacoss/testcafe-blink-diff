@@ -1,4 +1,5 @@
 const BlinkDiff = require('blink-diff');
+const open = require('open');
 const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
@@ -9,7 +10,7 @@ console.log('Processing screenshots...');
 
 const images = glob
   .sync('**/*.png', { cwd: imagesPath })
-  .filter(x => !x.includes('thumbnails') && !x.includes('_out.png'))
+  .filter(x => x.indexOf('thumbnails') === -1 && x.indexOf('_out.png') === -1)
   .reduce((prev, cur) => {
     const groupedName = cur.match(/_(actual|base)\.png$/);
     const fixedName = cur.replace(groupedName[0], '')
@@ -84,4 +85,8 @@ Promise.all(data)
     fs.writeFileSync(destFile, render(results));
 
     console.log(`Write ${path.relative(process.cwd(), destFile)}`); // eslint-disable-line
+
+    if (process.argv.slice(2).indexOf('--open') !== -1) {
+      open(destFile);
+    }
   });
