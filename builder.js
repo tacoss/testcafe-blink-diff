@@ -1,4 +1,5 @@
 const BlinkDiff = require('blink-diff');
+const wargs = require('wargs');
 const open = require('open');
 const glob = require('glob');
 const path = require('path');
@@ -7,8 +8,6 @@ const fs = require('fs');
 const pkgInfo = require('./package.json');
 
 const USAGE_INFO = `
-${pkgInfo.name} v${pkgInfo.version}
-
 Usage:
   ${pkgInfo.name} [SCREENSHOTS_DIRECTORY] [--open] [--force]
 
@@ -19,7 +18,20 @@ Snapshots:
 - Run ${pkgInfo.name} to generate a report from the taken screenshots, e.g. \`npx ${pkgInfo.name} tests/screenshots --open\`
 `;
 
-if (!process.argv.slice(2).length) {
+const argv = wargs(process.argv.slice(2), {
+  alias: {
+    v: 'version',
+  },
+  boolean: 'v',
+});
+
+console.log(`${pkgInfo.name} v${pkgInfo.version}`);
+
+if (argv.flags.version) {
+  process.exit();
+}
+
+if (!argv._.length) {
   console.log(USAGE_INFO);
   process.exit();
 }
