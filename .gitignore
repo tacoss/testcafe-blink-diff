@@ -1,3 +1,4 @@
 *.log
 .DS_Store
 node_modules
+report.es5.js

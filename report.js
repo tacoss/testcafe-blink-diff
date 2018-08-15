@@ -29,7 +29,7 @@ const ul = tag('ul');
 images.forEach(imageInfo => {
   const diffDetails = tag('div', { class: `info ${imageInfo.ok ? 'passed' : 'failed'}` });
   const isOK = tag('h3', null, imageInfo.ok ? 'It passed.' : 'It did not passed!');
-  const diff = tag('h2', null, `Diff: ${imageInfo.diff}%`);
+  const diff = tag('h2', null, `${imageInfo.diff}%`);
 
   function click() {
     window.open(imageInfo.images.out);
@@ -51,7 +51,7 @@ images.forEach(imageInfo => {
   flex.appendChild(actualImg);
   flex.appendChild(diffDetails);
 
-  const title = tag('strong', null, imageInfo.label);
+  const title = tag('strong', null, imageInfo.label.replace(/\//g, ' &raquo; '));
 
   li.appendChild(title);
   li.appendChild(flex);
