@@ -2,19 +2,20 @@
   "name": "testcafe-blink-diff",
   "version": "0.2.1",
   "description": "Visual regression for Testcafé through BlinkDiff",
-  "main": "index.js",
+  "main": "lib/index.js",
   "bin": {
     "testcafe-blink-diff": "bin"
   },
   "files": [
     "bin",
-    "index.js",
-    "report.es5.js",
-    "builder.js",
-    "index.html"
+    "index.html",
+    "lib/index.js",
+    "lib/builder.js",
+    "dist/report.es5.js"
   ],
   "scripts": {
-    "dist": "buble report.js > report.es5.js",
+    "dist": "mkdir -p dist && npm run build",
+    "build": "buble lib/report.js > dist/report.es5.js",
     "prepublish": "npm run dist"
   },
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
