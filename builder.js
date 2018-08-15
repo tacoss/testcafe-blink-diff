@@ -116,11 +116,11 @@ function build() {
         throw new Error(errorMessage);
       }
 
-      console.warn(errorMessage); // eslint-disable-line
+      console.warn(`  ${errorMessage}`); // eslint-disable-line
       return;
     }
 
-    console.log(`  Processing '${groupedName}' ...`); // eslint-disable-line
+    console.log(`Processing '${groupedName}' ...`); // eslint-disable-line
 
     const actualImage = path.relative(imagesPath, images[groupedName].actual);
     const baseImage = path.relative(imagesPath, images[groupedName].base);
@@ -165,7 +165,7 @@ function build() {
             height: result.height,
             width: result.width,
             label: groupedName,
-            diff: result.differences,
+            diff: ((result.differences / result.dimension) * 100).toFixed(2),
             ok,
           });
         }
@@ -178,8 +178,8 @@ function build() {
 
 function render(reportInfo) {
   return readFile('index.html')
-    .replace('{json}', JSON.stringify(reportInfo))
-    .replace('{code}', `!function() { ${readFile('report.js')} }()`);
+    .replace('/* json */', JSON.stringify(reportInfo))
+    .replace('/* code */', `!function() { ${readFile('report.js')} }()`);
 }
 
 Promise.resolve()

@@ -4,17 +4,21 @@
     <title>testcafe-blink-diff</title>
     <style>
       * { margin: 0; padding: 0; }
+      body { font-family: Helvetica; }
       ul { list-style-type: none; max-width: 760px; margin: auto; }
       li { margin-top: 20px; }
       .flex { display: flex; text-align: center; align-items: center; justify-content: center; }
       .info { min-width: 33.3%; }
       .passed { color: green; }
+      .passed::before { content: '✓'; display: inline; }
       .failed { color: red; }
+      .failed::before { content: '✗'; display: inline; }
       button { padding: 5px 10px; background-color: transparent; }
     </style>
   </head>
   <body>
-    <script type="application/json" id="app">{json}</script>
-    <script>{code}</script>
+    <script type="application/json" id="app">/* json */</script>
+    <script>/* code */
+</script>
   </body>
 </html>

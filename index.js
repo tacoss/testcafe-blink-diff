@@ -1,4 +1,6 @@
 const isTakeSnapshot = process.argv.slice(2).indexOf('--take-snapshot');
+
+// FIXME: take given value for custom naming, e.g. `--take-snapshot test`
 const type = (process.env.SNAPSHOT || isTakeSnapshot !== -1) ? 'base' : 'actual';
 
 function normalize(value) {
