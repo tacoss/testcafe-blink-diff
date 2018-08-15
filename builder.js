@@ -66,9 +66,8 @@ const sources = require('glob') // eslint-disable-line
 const images = sources
   .filter(x => x.indexOf('thumbnails') === -1)
   .reduce((prev, cur) => {
-    const prefix = path.dirname(cur) === '.' ? '' : `${path.dirname(cur)}/`;
     const groupedName = path.basename(cur, '.png');
-    const fixedName = `${prefix}${groupedName}`
+    const fixedName = `${path.dirname(cur) === '.' ? groupedName : path.dirname(cur)}`
       .replace(/__/g, '§')
       .replace('-or-', '/')
       .replace(/_/g, ' ')
@@ -126,7 +125,7 @@ function build() {
 
   Object.keys(images).forEach(groupedName => {
     if (!(images[groupedName][left] && images[groupedName][right])) {
-      const errorMessage = `Missing snapshots for '${groupedName}'`;
+      const errorMessage = `Missing snapshots for '${groupedName}', given '${left}:${right}'`;
 
       if (!argv.flags.force) {
         throw new Error(errorMessage);
@@ -164,9 +163,10 @@ function build() {
           reject(error);
         } else {
           const ok = diff.hasPassed(result.code);
+          const fixed = ((result.differences / result.dimension) * 100).toFixed(2);
 
           if (!ok && !argv.flags.force) {
-            reject(new Error(`Failed '${groupedName}', diff: ${result.differences}`));
+            reject(new Error(`Failed '${groupedName}', diff: ${fixed}%`));
             return;
           }
 
@@ -183,7 +183,7 @@ function build() {
             height: result.height,
             width: result.width,
             label: groupedName,
-            diff: ((result.differences / result.dimension) * 100).toFixed(2),
+            diff: fixed,
             ok,
           });
         }
