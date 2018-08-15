@@ -3,4 +3,4 @@
 ':' // ; exec "$(command -v nodejs || command -v node)" "$0" "$@"
 ; // eslint-disable-line semi-style
 
-require('./builder');
+require('../lib/builder');
