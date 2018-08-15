@@ -59,8 +59,10 @@ const images = sources
   .reduce((prev, cur) => {
     const groupedName = cur.match(/\/(actual|base)\.png$/);
     const fixedName = cur.replace(groupedName[0], '')
-      .replace('__or__', '/')
-      .replace(/_/g, ' ');
+      .replace(/__/g, '§')
+      .replace('-or-', '/')
+      .replace(/_/g, ' ')
+      .replace(/§/g, '_');
 
     if (!prev[fixedName]) {
       prev[fixedName] = {};
