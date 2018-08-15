@@ -20,7 +20,7 @@ Snapshots:
 
 - Import and call \`await takeSnapshot(t)\` within your tests, e.g. \`import { takeSnapshot } from '${pkgInfo.name}';\`
 - Run testcafe with \`--take-snapshot\` to take the base screenshots, run again without \`--take-snapshot\` to take actual screenshots
-- Run ${pkgInfo.name} to generate a report from the taken screenshots, e.g. \`npx ${pkgInfo.name} tests/screenshots --open --threshold 0.2\`
+- Run ${pkgInfo.name} to generate a report from the taken screenshots, e.g. \`npx ${pkgInfo.name} tests/screenshots --open --threshold 0.03\`
 `;
 
 const cwd = process.cwd();
