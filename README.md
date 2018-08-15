@@ -37,3 +37,7 @@ $ npx testcafe-blink-diff tests/screenshots --open --threshold 0.03 # <= 3% is O
 ```
 
 That's all, explore the generated report and enjoy!
+
+<p align="center">
+  <img width="479" height="794" src="report.png">
+</p>
