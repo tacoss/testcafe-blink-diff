@@ -1,7 +1,4 @@
-const BlinkDiff = require('blink-diff');
 const wargs = require('wargs');
-const open = require('open');
-const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
 
@@ -62,7 +59,7 @@ const ratio = parseFloat(argv.flags.threshold || '0.01');
 
 console.log('Collecting screenshots...');
 
-const sources = glob
+const sources = require('glob') // eslint-disable-line
   .sync('**/*.png', { cwd: imagesPath })
   .filter(x => x.indexOf('out.png') === -1);
 
@@ -146,6 +143,8 @@ function build() {
     const baseDir = path.dirname(images[groupedName][left]);
     const outFile = path.join(baseDir, 'out.png');
 
+    const BlinkDiff = require('blink-diff');
+
     const diff = new BlinkDiff({
       imageAPath: images[groupedName][left],
       imageBPath: images[groupedName][right],
@@ -227,7 +226,7 @@ Promise.resolve()
   })
   .then(() => {
     if (argv.flags.open) {
-      open(destFile, typeof argv.flags.open === 'string' ? argv.flags.open : undefined);
+      require('open')(destFile, typeof argv.flags.open === 'string' ? argv.flags.open : undefined);
     }
   })
   .catch(e => {
