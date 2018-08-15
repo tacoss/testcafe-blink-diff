@@ -14,14 +14,21 @@ Usage:
 Options:
   -o, --open       Browse generated report
   -f, --force      Ignore missing screenshots
-  -c, --compare    Custom snapshots, e.g. \`-d from:to\`
+  -c, --compare    Custom snapshots, e.g. \`-c base:actual\`
   -t, --threshold  Percentage of difference expected
 
 Snapshots:
 
-- Import and call \`await takeSnapshot(t)\` within your tests, e.g. \`import { takeSnapshot } from '${pkgInfo.name}';\`
-- Run testcafe with \`--take-snapshot\` to take the base screenshots, run again without \`--take-snapshot\` to take actual screenshots
-- Run ${pkgInfo.name} to generate a report from the taken screenshots, e.g. \`npx ${pkgInfo.name} tests/screenshots --open --threshold 0.03\`
+- Import and call \`await takeSnapshot(t)\` within your tests,
+  e.g. \`import { takeSnapshot } from '${pkgInfo.name}';\`
+
+- Run testcafe with \`--take-snapshot\` to take the base screenshots,
+  run again without \`--take-snapshot\` to take actual screenshots
+
+- Run ${pkgInfo.name} to generate a report from the taken screenshots,
+  e.g. \`npx ${pkgInfo.name} tests/screenshots --open --threshold 0.03\`
+
+You can name your snapshots, e.g. \`--take-snapshot latest\` and compare with \`--compare v1:latest \`
 `;
 
 const cwd = process.cwd();
