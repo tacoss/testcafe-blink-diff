@@ -197,7 +197,7 @@ function build() {
 function render(reportInfo) {
   return readFile('index.html')
     .replace('/* json */', JSON.stringify(reportInfo))
-    .replace('/* code */', `!function() { ${readFile('report.js')} }()`);
+    .replace('/* code */', `!function() { ${readFile('report.es5.js')} }()`);
 }
 
 Promise.resolve()

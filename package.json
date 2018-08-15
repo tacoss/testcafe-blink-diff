@@ -9,7 +9,7 @@
   "files": [
     "bin",
     "index.js",
-    "report.js",
+    "report.es5.js",
     "builder.js",
     "index.html"
   ],
