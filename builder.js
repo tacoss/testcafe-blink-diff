@@ -14,6 +14,7 @@ Usage:
 Options:
   -o, --open       Browse generated report
   -f, --force      Ignore missing screenshots
+  -c, --compare    Custom snapshots, e.g. \`-d from:to\`
   -t, --threshold  Percentage of difference expected
 
 Snapshots:
@@ -26,9 +27,13 @@ Snapshots:
 const cwd = process.cwd();
 const argv = wargs(process.argv.slice(2), {
   alias: {
+    t: 'threshold',
+    c: 'compare',
     v: 'version',
+    f: 'force',
+    o: 'open',
   },
-  boolean: 'v',
+  boolean: 'vfo',
 });
 
 console.log(`${pkgInfo.name} v${pkgInfo.version}`);
@@ -111,8 +116,12 @@ function mkdirp(filepath) {
 function build() {
   const data = [];
 
+  const check = (argv.flags.compare || '').split(':');
+  const left = check[0] || 'base';
+  const right = check[1] || 'actual';
+
   Object.keys(images).forEach(groupedName => {
-    if (!(images[groupedName].base && images[groupedName].actual)) {
+    if (!(images[groupedName][left] && images[groupedName][right])) {
       const errorMessage = `Missing snapshots for '${groupedName}'`;
 
       if (!argv.flags.force) {
@@ -125,14 +134,14 @@ function build() {
 
     console.log(`Processing '${groupedName}' ...`); // eslint-disable-line
 
-    const actualImage = path.relative(imagesPath, images[groupedName].actual);
-    const baseImage = path.relative(imagesPath, images[groupedName].base);
-    const baseDir = path.dirname(images[groupedName].base);
+    const actualImage = path.relative(imagesPath, images[groupedName][right]);
+    const baseImage = path.relative(imagesPath, images[groupedName][left]);
+    const baseDir = path.dirname(images[groupedName][left]);
     const outFile = path.join(baseDir, 'out.png');
 
     const diff = new BlinkDiff({
-      imageAPath: images[groupedName].base,
-      imageBPath: images[groupedName].actual,
+      imageAPath: images[groupedName][left],
+      imageBPath: images[groupedName][right],
 
       thresholdType: BlinkDiff.THRESHOLD_PERCENT,
       threshold: ratio,
