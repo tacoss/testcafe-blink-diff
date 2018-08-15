@@ -1,7 +1,7 @@
 {
   "name": "testcafe-blink-diff",
-  "version": "0.1.1",
-  "description": "Visual regression for Tescafé through BlinkDiff",
+  "version": "0.2.0",
+  "description": "Visual regression for Testcafé through BlinkDiff",
   "main": "index.js",
   "bin": {
     "testcafe-blink-diff": "bin"
