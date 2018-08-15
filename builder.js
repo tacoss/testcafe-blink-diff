@@ -44,14 +44,18 @@ if (!argv._.length) {
 
 const imagesPath = path.resolve(argv._[0] || 'screenshots');
 const destPath = path.resolve(argv._[1] || 'generated');
+const destFile = `${destPath}/index.html`;
 
 const ratio = parseFloat(argv.flags.threshold || '0.01');
 
 console.log('Collecting screenshots...');
 
-const images = glob
+const sources = glob
   .sync('**/*.png', { cwd: imagesPath })
-  .filter(x => x.indexOf('thumbnails') === -1 && x.indexOf('out.png') === -1)
+  .filter(x => x.indexOf('out.png') === -1);
+
+const images = sources
+  .filter(x => x.indexOf('thumbnails') === -1)
   .reduce((prev, cur) => {
     const groupedName = cur.match(/\/(actual|base)\.png$/);
     const fixedName = cur.replace(groupedName[0], '')
@@ -71,6 +75,36 @@ function readFile(filename) {
   return fs.readFileSync(`${__dirname}/${filename}`).toString();
 }
 
+function copyFile(source, target) {
+  const rd = fs.createReadStream(source);
+  const wr = fs.createWriteStream(target);
+
+  return new Promise((resolve, reject) => {
+    rd.on('error', reject);
+    wr.on('error', reject);
+    wr.on('finish', resolve);
+    rd.pipe(wr);
+  }).catch(e => {
+    rd.destroy();
+    wr.end();
+    throw e;
+  });
+}
+
+function mkdirp(filepath) {
+  const rel = path.relative(cwd, filepath);
+  const parts = rel.split('/').reduce((prev, cur, i, v) => {
+    prev.push(path.join(cwd, v.slice(0, i + 1).join('/')));
+    return prev;
+  }, []);
+
+  parts.forEach(dir => {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+  });
+}
+
 function build() {
   const data = [];
 
@@ -78,7 +112,7 @@ function build() {
     if (!(images[groupedName].base && images[groupedName].actual)) {
       const errorMessage = `Missing snapshots for '${groupedName}'`;
 
-      if (argv.flags.force) {
+      if (!argv.flags.force) {
         throw new Error(errorMessage);
       }
 
@@ -90,7 +124,7 @@ function build() {
 
     const actualImage = path.relative(imagesPath, images[groupedName].actual);
     const baseImage = path.relative(imagesPath, images[groupedName].base);
-    const baseDir = path.dirname(actualImage);
+    const baseDir = path.dirname(images[groupedName].base);
     const outFile = path.join(baseDir, 'out.png');
 
     const diff = new BlinkDiff({
@@ -111,6 +145,13 @@ function build() {
         if (error) {
           reject(error);
         } else {
+          const ok = diff.hasPassed(result.code);
+
+          if (!ok && !argv.flags.force) {
+            reject(new Error(`Failed '${groupedName}', diff: ${result.differences}`));
+            return;
+          }
+
           resolve({
             thumbnails: {
               actual: path.join(baseDir === '.' ? '' : baseDir, `thumbnails/${path.basename(actualImage)}`),
@@ -121,9 +162,11 @@ function build() {
               base: baseImage,
               out: outFile,
             },
+            height: result.height,
+            width: result.width,
             label: groupedName,
             diff: result.differences,
-            ok: diff.hasPassed(result.code),
+            ok,
           });
         }
       });
@@ -142,17 +185,33 @@ function render(reportInfo) {
 Promise.resolve()
   .then(() => build())
   .then(results => {
-    const destFile = `${destPath}/index.html`;
+    mkdirp(destPath);
+
+    const tasks = [];
+
+    if (destPath !== imagesPath) {
+      sources.forEach(img => {
+        const imgDest = path.join(destPath, img);
+        const imgSrc = path.join(imagesPath, img);
+
+        mkdirp(path.dirname(imgDest));
+
+        tasks.push(copyFile(imgSrc, imgDest));
+      });
+    }
 
     fs.writeFileSync(destFile, render(results));
 
     console.log(`Write ${path.relative(cwd, destFile)}`); // eslint-disable-line
 
+    return Promise.all(tasks);
+  })
+  .then(() => {
     if (argv.flags.open) {
       open(destFile, typeof argv.flags.open === 'string' ? argv.flags.open : undefined);
     }
   })
   .catch(e => {
-    console.error(e.message); // eslint-disable-line
+    console.error(`[ERR] ${e.message}`); // eslint-disable-line
     process.exit(1);
   });
