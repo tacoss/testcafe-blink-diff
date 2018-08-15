@@ -1,3 +1,6 @@
+[![NPM version](https://badge.fury.io/js/testcafe-blink-diff.png)](http://badge.fury.io/js/testcafe-blink-diff)
+[![Known Vulnerabilities](https://snyk.io/test/npm/testcafe-blink-diff/badge.svg)](https://snyk.io/test/npm/testcafe-blink-diff)
+
 # How it works?
 
 Install this dependency in your project, e.g. `npm i testcafe-blink-diff --save-dev`
