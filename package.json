@@ -8,7 +8,7 @@
   },
   "files": [
     "bin",
-    "index.html",
+    "lib/index.html",
     "lib/index.js",
     "lib/builder.js",
     "dist/report.es5.js"

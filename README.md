@@ -33,7 +33,7 @@ $ npx testcafe chrome:headless tests/e2e/cases -s tests/screenshots --take-snaps
 
 Now run the same tests without `--take-snapshot` to take the **actual** screenshots to compare with.
 
-Finally, invoke the CLI for generating a simple `index.html` report on the same directory where the screenshots are placed, e.g.
+Finally, invoke the CLI for generating a simple `generated/index.html` report, e.g.
 
 ```bash
 $ npx testcafe-blink-diff tests/screenshots --open --threshold 0.03 # <= 3% is OK
