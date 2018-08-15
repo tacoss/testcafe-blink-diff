@@ -57,8 +57,9 @@ const sources = glob
 const images = sources
   .filter(x => x.indexOf('thumbnails') === -1)
   .reduce((prev, cur) => {
-    const groupedName = cur.match(/\/(actual|base)\.png$/);
-    const fixedName = cur.replace(groupedName[0], '')
+    const prefix = path.dirname(cur) === '.' ? '' : `${path.dirname(cur)}/`;
+    const groupedName = path.basename(cur, '.png');
+    const fixedName = `${prefix}${groupedName}`
       .replace(/__/g, '§')
       .replace('-or-', '/')
       .replace(/_/g, ' ')
@@ -68,7 +69,7 @@ const images = sources
       prev[fixedName] = {};
     }
 
-    prev[fixedName][groupedName[1]] = path.join(imagesPath, cur);
+    prev[fixedName][groupedName] = path.join(imagesPath, cur);
 
     return prev;
   }, {});
