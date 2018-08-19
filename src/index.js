@@ -1,11 +1,11 @@
-/* global somedom, window, document */
+/* global window, document */
+
+import { view, mount } from 'somedom';
 
 const appScript = document.getElementById('app');
 const images = JSON.parse(appScript.innerHTML);
 
 appScript.parentNode.removeChild(appScript);
-
-const { view, mount } = somedom;
 
 function ui(overlay, onClose) {
   const w = overlay.offsetWidth;
@@ -20,7 +20,7 @@ function ui(overlay, onClose) {
     ['button', { class: 'close', click: onClose }, '&times;'],
   ]);
 
-  const { slider } = widget.refs;
+  const { slider } = widget.$refs;
 
   slider.style.top = `${(h / 2) - (slider.offsetHeight / 2)}px`;
   slider.style.left = `${(w / 2) - (slider.offsetWidth / 2)}px`;
@@ -85,7 +85,7 @@ function ui(overlay, onClose) {
       window.removeEventListener('touchstop', slideFinish);
       window.removeEventListener('mousemove', slideMove);
       window.removeEventListener('touchmove', slideMove);
-      widget.destroy();
+      widget.$destroy();
     },
   };
 }
@@ -94,26 +94,27 @@ function openModal(imageInfo, asDiff) {
   let overlay;
   let modal;
 
-  function onClose() {
+  function onClose(callback) {
+    window.removeEventListener('keyup', callback);
+
     document.body.style.overflow = '';
 
     if (overlay) {
       overlay.teardown();
     }
 
-    modal.destroy();
-  }
-
-  function closeModal(e) {
-    if (e.target === modal.node) {
-      onClose();
-    }
+    modal.$destroy();
   }
 
   function closeCheck(e) {
     if (e.keyCode === 27) {
-      onClose();
-      window.removeEventListener('keyup', closeCheck);
+      onClose(closeCheck);
+    }
+  }
+
+  function closeModal(e) {
+    if (!e || e.target === modal.$node) {
+      onClose(closeCheck);
     }
   }
 
@@ -124,7 +125,7 @@ function openModal(imageInfo, asDiff) {
       asDiff
         ? [
           ['img', { src: imageInfo.images.out }],
-          ['button', { class: 'close', click: onClose }, '&times;'],
+          ['button', { class: 'close', click: () => closeModal() }, '&times;'],
         ] : [
           ['div', { class: 'layer' }, [
             ['img', { src: imageInfo.images.base }],
@@ -141,8 +142,24 @@ function openModal(imageInfo, asDiff) {
   document.body.style.overflow = 'hidden';
 
   if (!asDiff) {
-    overlay = ui(modal.refs.overlay, onClose);
+    overlay = ui(modal.$refs.overlay, onClose);
   }
+}
+
+function ImageItem(props) {
+  return ['li', null, [
+    ['strong', null, props.label],
+    ['div', { class: 'flex' }, [
+      ['img', { src: props.thumbnails.base }],
+      ['img', { src: props.thumbnails.actual }],
+      ['div', { class: `info ${props.ok ? 'passed' : 'failed'}` }, [
+        ['h3', null, props.ok ? 'It passed.' : 'It did not passed'],
+        ['h2', null, `Diff: ${props.diff}%`],
+        ['button', { click: () => openModal(props, true) }, 'Open diff'],
+        ['button', { click: () => openModal(props) }, 'Compare'],
+      ]],
+    ]],
+  ]];
 }
 
 function ImageList() {
@@ -150,21 +167,7 @@ function ImageList() {
     return ['div', null, 'No differences to report'];
   }
 
-  return ['ul', null, images.map(imageInfo => {
-    return ['li', null, [
-      ['strong', null, imageInfo.label],
-      ['div', { class: 'flex' }, [
-        ['img', { src: imageInfo.thumbnails.base }],
-        ['img', { src: imageInfo.thumbnails.actual }],
-        ['div', { class: `info ${imageInfo.ok ? 'passed' : 'failed'}` }, [
-          ['h3', null, imageInfo.ok ? 'It passed.' : 'It did not passed!'],
-          ['h2', null, `Diff: ${imageInfo.diff}%`],
-          ['button', { click: () => openModal(imageInfo, true) }, 'Open diff'],
-          ['button', { click: () => openModal(imageInfo) }, 'Compare'],
-        ]],
-      ]],
-    ]];
-  })];
+  return ['ul', null, images.map(ImageItem)];
 }
 
 mount(view(ImageList));
