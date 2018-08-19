@@ -11,11 +11,11 @@
     "lib/index.html",
     "lib/index.js",
     "lib/builder.js",
-    "dist/report.es5.js"
+    "dist/reporter.iife.js"
   ],
   "scripts": {
     "dist": "mkdir -p dist && npm run build",
-    "build": "buble lib/report.js > dist/report.es5.js",
+    "build": "bili --format iife --js buble --name reporter",
     "prepublish": "npm run dist"
   },
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
@@ -27,7 +27,7 @@
     "wargs": "^0.8.1"
   },
   "devDependencies": {
-    "buble": "^0.19.3",
+    "bili": "^3.1.2",
     "eslint": "^5.3.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0"
