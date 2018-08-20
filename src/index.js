@@ -120,7 +120,7 @@ function openModal(imageInfo, asDiff) {
 
   window.addEventListener('keyup', closeCheck);
 
-  modal = view('div', { class: 'modal', click: closeModal }, [
+  modal = view('div', { class: 'noop modal', click: closeModal }, [
     ['div', { class: 'container', style: `width:${imageInfo.width}px` },
       asDiff
         ? [
@@ -150,13 +150,13 @@ function ImageItem(props) {
   return ['li', null, [
     ['strong', null, props.label],
     ['div', { class: 'flex' }, [
-      ['img', { src: props.thumbnails.base }],
-      ['img', { src: props.thumbnails.actual }],
+      ['img', { class: 'noop', src: props.thumbnails.base }],
+      ['img', { class: 'noop', src: props.thumbnails.actual }],
       ['div', { class: `info ${props.ok ? 'passed' : 'failed'}` }, [
         ['h3', null, props.ok ? 'It passed.' : 'It did not passed'],
         ['h2', null, `Diff: ${props.diff}%`],
-        ['button', { click: () => openModal(props, true) }, 'Open diff'],
-        ['button', { click: () => openModal(props) }, 'Compare'],
+        ['button', { class: 'noop', click: () => openModal(props, true) }, 'Open diff'],
+        ['button', { class: 'noop', click: () => openModal(props) }, 'Compare'],
       ]],
     ]],
   ]];
