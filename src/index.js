@@ -128,10 +128,10 @@ function openModal(imageInfo, asDiff) {
           ['button', { class: 'close', click: () => closeModal() }, '&times;'],
         ] : [
           ['div', { class: 'layer' }, [
-            ['img', { src: imageInfo.images.base }],
+            ['img', { src: imageInfo.images.actual }],
           ]],
           ['div', { ref: 'overlay', class: 'layer overlay' }, [
-            ['img', { src: imageInfo.images.actual }],
+            ['img', { src: imageInfo.images.base }],
           ]],
         ],
     ],
