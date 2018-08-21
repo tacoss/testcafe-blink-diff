@@ -15,8 +15,7 @@
   ],
   "scripts": {
     "dist": "mkdir -p dist && npm run build",
-    "build": "bili --format iife --js buble --name reporter",
-    "prepublish": "npm run dist"
+    "build": "bili --format iife --js buble --name reporter"
   },
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
