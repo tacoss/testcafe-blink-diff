@@ -1,11 +1,15 @@
 /* global window, document */
 
-import { view, mount } from 'somedom';
+import {
+  bind, mount, render, unmount, listeners,
+} from 'somedom';
 
 const appScript = document.getElementById('app');
 const images = JSON.parse(appScript.innerHTML);
 
 appScript.parentNode.removeChild(appScript);
+
+const tag = bind(render, listeners());
 
 function ui(overlay, onClose) {
   const w = overlay.offsetWidth;
@@ -15,12 +19,12 @@ function ui(overlay, onClose) {
 
   overlay.style.width = `${w / 2}px`;
 
-  const widget = view(overlay.parentNode, null, [
-    ['div', { ref: 'slider', class: 'slider' }],
-    ['button', { class: 'close', click: onClose }, '&times;'],
-  ]);
+  const widget = mount(overlay.parentNode, ['div', [
+    ['div', { class: 'slider' }],
+    ['button', { class: 'close', onclick: onClose }, '×'],
+  ]], tag);
 
-  const { slider } = widget.$refs;
+  const slider = document.querySelector('.slider');
 
   slider.style.top = `${(h / 2) - (slider.offsetHeight / 2)}px`;
   slider.style.left = `${(w / 2) - (slider.offsetWidth / 2)}px`;
@@ -85,7 +89,7 @@ function ui(overlay, onClose) {
       window.removeEventListener('touchstop', slideFinish);
       window.removeEventListener('mousemove', slideMove);
       window.removeEventListener('touchmove', slideMove);
-      widget.$destroy();
+      unmount(widget);
     },
   };
 }
@@ -103,7 +107,7 @@ function openModal(imageInfo, asDiff) {
       overlay.teardown();
     }
 
-    modal.$destroy();
+    unmount(modal);
   }
 
   function closeCheck(e) {
@@ -120,43 +124,41 @@ function openModal(imageInfo, asDiff) {
 
   window.addEventListener('keyup', closeCheck);
 
-  modal = view('div', { class: 'noop modal', click: closeModal }, [
-    ['div', { class: 'container', style: `width:${imageInfo.width}px` },
+  modal = mount(['div', { class: 'noop modal', onclick: closeModal }, [
+    ['div', { class: 'container', style: `width:${imageInfo.width}px;height:${imageInfo.height}px` },
       asDiff
         ? [
           ['img', { src: imageInfo.images.out }],
-          ['button', { class: 'close', click: () => closeModal() }, '&times;'],
+          ['button', { class: 'close', onclick: () => closeModal() }, '×'],
         ] : [
           ['div', { class: 'layer' }, [
             ['img', { src: imageInfo.images.actual }],
           ]],
-          ['div', { ref: 'overlay', class: 'layer overlay' }, [
+          ['div', { class: 'layer overlay' }, [
             ['img', { src: imageInfo.images.base }],
           ]],
         ],
     ],
-  ]);
-
-  mount(modal);
+  ]], tag);
 
   document.body.style.overflow = 'hidden';
 
   if (!asDiff) {
-    overlay = ui(modal.$refs.overlay, onClose);
+    overlay = ui(document.querySelector('.overlay'), onClose);
   }
 }
 
 function ImageItem(props) {
-  return ['li', null, [
-    ['strong', null, props.label],
+  return ['li', [
+    ['strong', props.label],
     ['div', { class: 'flex' }, [
       ['img', { class: 'noop', src: props.thumbnails.base }],
       ['img', { class: 'noop', src: props.thumbnails.actual }],
       ['div', { class: `info ${props.ok ? 'passed' : 'failed'}` }, [
-        ['h3', null, props.ok ? 'It passed.' : 'It did not passed'],
-        ['h2', null, `Diff: ${props.diff}%`],
-        ['button', { class: 'noop', click: () => openModal(props, true) }, 'Open diff'],
-        ['button', { class: 'noop', click: () => openModal(props) }, 'Compare'],
+        ['h3', props.ok ? 'It passed.' : 'It did not passed'],
+        ['h2', `Diff: ${props.diff}%`],
+        ['button', { class: 'noop', onclick: () => openModal(props, true) }, 'Open diff'],
+        ['button', { class: 'noop', onclick: () => openModal(props) }, 'Compare'],
       ]],
     ]],
   ]];
@@ -164,10 +166,10 @@ function ImageItem(props) {
 
 function ImageList() {
   if (!images.length) {
-    return ['div', null, 'No differences to report'];
+    return ['div', 'No differences to report'];
   }
 
-  return ['ul', null, images.map(ImageItem)];
+  return ['ul', images.map(ImageItem)];
 }
 
-mount(view(ImageList));
+mount([ImageList], tag);
