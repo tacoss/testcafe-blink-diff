@@ -70,6 +70,12 @@ export function mountOverlay(overlay) {
   window.addEventListener('touchstop', slideFinish);
 
   return {
+    set width(value) {
+      slide(value);
+    },
+    get width() {
+      return parseInt(overlay.style.width, 10);
+    },
     teardown() {
       slider.removeEventListener('mousedown', slideReady);
       slider.removeEventListener('touchstart', slideReady);
@@ -99,8 +105,8 @@ export function openModal(offsetKey, asDiff, images) {
   }
 
   function testKeys(e) {
-    if (e.keyCode === 37) modal.prev();
-    if (e.keyCode === 39) modal.next();
+    if (e.keyCode === 37) modal.prev(e);
+    if (e.keyCode === 39) modal.next(e);
 
     if (e.keyCode === 9) {
       e.preventDefault();
@@ -145,12 +151,26 @@ export function openModal(offsetKey, asDiff, images) {
     diff: asDiff,
     key: offsetKey,
   }, {
-    next: () => state => ({
-      key: Math.min(state.key + 1, images.length - 1),
-    }),
-    prev: () => state => ({
-      key: Math.max(state.key - 1, 0),
-    }),
+    next: e => ({ key, diff }) => {
+      if (!diff && e.shiftKey) {
+        overlay.width = Math.min(images[key].width, overlay.width + (images[key].width * 0.25));
+        return;
+      }
+
+      return {
+        key: Math.min(key + 1, images.length - 1),
+      };
+    },
+    prev: e => ({ key, diff }) => {
+      if (!diff && e.shiftKey) {
+        overlay.width = Math.max(0, overlay.width - (images[key].width * 0.25));
+        return;
+      }
+
+      return {
+        key: Math.max(key - 1, 0),
+      };
+    },
     change: () => ({ diff }) => {
       if (overlay) {
         overlay.teardown();
