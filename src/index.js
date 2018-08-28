@@ -1,7 +1,7 @@
 /* global window, document */
 
 import {
-  bind, mount, render, unmount, listeners,
+  bind, view, mount, render, unmount, listeners,
 } from 'somedom';
 
 const appScript = document.getElementById('app');
@@ -94,7 +94,7 @@ function ui(overlay, onClose) {
   };
 }
 
-function openModal(imageInfo, asDiff) {
+function openModal(offsetKey, asDiff) {
   let overlay;
   let modal;
 
@@ -107,48 +107,88 @@ function openModal(imageInfo, asDiff) {
       overlay.teardown();
     }
 
-    unmount(modal);
+    modal.unmount();
   }
 
-  function closeCheck(e) {
+  function testKeys(e) {
+    if (e.keyCode === 37) modal.prev();
+    if (e.keyCode === 39) modal.next();
+
+    if (e.keyCode === 9) {
+      e.preventDefault();
+      modal.change();
+    }
+
     if (e.keyCode === 27) {
-      onClose(closeCheck);
+      onClose(testKeys);
     }
   }
 
   function closeModal(e) {
-    if (!e || e.target === modal.$node) {
-      onClose(closeCheck);
+    if (!e || e.target === modal.target) {
+      onClose(testKeys);
     }
   }
 
-  window.addEventListener('keyup', closeCheck);
+  function addOverlay() {
+    return ui(document.querySelector('.overlay'), onClose);
+  }
 
-  modal = mount(['div', { class: 'noop modal', onclick: closeModal }, [
-    ['div', { class: 'container', style: `width:${imageInfo.width}px;height:${imageInfo.height}px` },
-      asDiff
+  window.addEventListener('keyup', testKeys);
+
+  const app = view(({ key, diff }) => ['div', { class: 'noop modal', onclick: closeModal }, [
+    ['div', { class: 'container', style: `width:${images[key].width}px;height:${images[key].height}px` },
+      (diff
         ? [
-          ['img', { src: imageInfo.images.out }],
-          ['button', { class: 'close', onclick: () => closeModal() }, '×'],
+          ['img', { src: images[key].images.out }],
         ] : [
           ['div', { class: 'layer' }, [
-            ['img', { src: imageInfo.images.actual }],
+            ['img', { src: images[key].images.actual }],
           ]],
           ['div', { class: 'layer overlay' }, [
-            ['img', { src: imageInfo.images.base }],
+            ['img', { src: images[key].images.base }],
           ]],
-        ],
+        ])
+        .concat([
+          ['button', { class: 'close', onclick: () => closeModal() }, '×'],
+        ]),
     ],
-  ]], tag);
+  ]], {
+    diff: asDiff,
+    key: offsetKey,
+  }, {
+    next: () => state => ({
+      key: Math.min(state.key + 1, images.length - 1),
+    }),
+    prev: () => state => ({
+      key: Math.max(state.key - 1, 0),
+    }),
+    change: () => ({ diff }) => {
+      if (overlay) {
+        overlay.teardown();
+        overlay = null;
+      } else if (diff) {
+        setTimeout(() => {
+          overlay = addOverlay();
+        });
+      }
+
+      return {
+        diff: !diff,
+      };
+    },
+  });
+
+  modal = app(document.body, tag);
 
   document.body.style.overflow = 'hidden';
 
   if (!asDiff) {
-    overlay = ui(document.querySelector('.overlay'), onClose);
+    overlay = addOverlay();
   }
 }
 
-function ImageItem(props) {
+function ImageItem(props, key) {
   return ['li', [
     ['strong', props.label],
     ['div', { class: 'flex' }, [
@@ -157,8 +197,8 @@ function ImageItem(props) {
       ['div', { class: `info ${props.ok ? 'passed' : 'failed'}` }, [
         ['h3', props.ok ? 'It passed.' : 'It did not passed'],
         ['h2', `Diff: ${props.diff}%`],
-        ['button', { class: 'noop', onclick: () => openModal(props, true) }, 'Open diff'],
-        ['button', { class: 'noop', onclick: () => openModal(props) }, 'Compare'],
+        ['button', { class: 'noop', onclick: () => openModal(key, true) }, 'Open diff'],
+        ['button', { class: 'noop', onclick: () => openModal(key) }, 'Compare'],
       ]],
     ]],
   ]];
@@ -169,7 +209,7 @@ function ImageList() {
     return ['div', 'No differences to report'];
   }
 
-  return ['ul', images.map(ImageItem)];
+  return ['ul', images.map((x, key) => ImageItem(x, key))];
 }
 
 mount([ImageList], tag);
