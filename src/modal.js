@@ -145,25 +145,21 @@ export function openModal(offsetKey, asDiff, images) {
 
   window.addEventListener('keyup', testKeys);
 
-  const app = view(({ key, diff }) => ['div', { class: 'noop modal', onclick: closeModal }, [
-    ['div', {
-      class: 'container',
-      style: `width:${images[key].width}px;height:${images[key].height}px`,
-      onupdate: syncOverlay,
-    },
+  const app = view(({ key, diff }) => ['.noop.modal', { onclick: closeModal }, [
+    ['.container', { style: `width:${images[key].width}px;height:${images[key].height}px`, onupdate: syncOverlay },
       (diff
         ? [
           ['img', { src: images[key].images.out }],
         ] : [
-          ['div', { class: 'layer' }, [
-            ['img', { class: 'a', src: images[key].images.actual }],
+          ['.layer', [
+            ['img.a', { src: images[key].images.actual }],
           ]],
-          ['div', { class: 'layer overlay' }, [
-            ['img', { class: 'b', src: images[key].images.base }],
+          ['.layer.overlay', [
+            ['img.b', { src: images[key].images.base }],
           ]],
         ])
         .concat([
-          ['button', { class: 'close', onclick: () => closeModal() }, '×'],
+          ['button.close', { onclick: () => closeModal() }, '×'],
         ]),
     ],
   ]], {

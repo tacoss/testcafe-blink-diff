@@ -11,14 +11,14 @@ appScript.parentNode.removeChild(appScript);
 function ImageItem(props, key) {
   return ['li', [
     ['strong', props.label],
-    ['div', { class: 'flex' }, [
-      ['img', { class: 'noop', src: props.thumbnails.base }],
-      ['img', { class: 'noop', src: props.thumbnails.actual }],
-      ['div', { class: `info ${props.ok ? 'passed' : 'failed'}` }, [
+    ['div.flex', [
+      ['img.noop', { src: props.thumbnails.base }],
+      ['img.noop', { src: props.thumbnails.actual }],
+      ['.info', { class: props.ok ? 'passed' : 'failed' }, [
         ['h3', props.ok ? 'It passed.' : 'It did not passed'],
         ['h2', `Diff: ${props.diff}%`],
-        ['button', { class: 'noop', onclick: () => openModal(key, true, images) }, 'Open diff'],
-        ['button', { class: 'noop', onclick: () => openModal(key, false, images) }, 'Compare'],
+        ['button.noop', { onclick: () => openModal(key, true, images) }, 'Open diff'],
+        ['button.noop', { onclick: () => openModal(key, false, images) }, 'Compare'],
       ]],
     ]],
   ]];
