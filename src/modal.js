@@ -5,17 +5,21 @@ import {
 export const tag = bind(render, listeners());
 
 export function mountOverlay(overlay) {
-  const w = overlay.offsetWidth;
-  const h = overlay.offsetHeight;
-
+  let w;
+  let h;
   let clicked;
-
-  overlay.style.width = `${w / 2}px`;
 
   const slider = mount(overlay.parentNode, ['div', { class: 'slider' }], tag);
 
-  slider.style.top = `${(h / 2) - (slider.offsetHeight / 2)}px`;
-  slider.style.left = `${(w / 2) - (slider.offsetWidth / 2)}px`;
+  function sync() {
+    w = overlay.parentNode.offsetWidth;
+    h = overlay.parentNode.offsetHeight;
+
+    overlay.style.width = `${w / 2}px`;
+
+    slider.style.left = `${(w / 2) - (slider.offsetWidth / 2)}px`;
+    slider.style.top = `${(h / 2) - (slider.offsetHeight / 2)}px`;
+  }
 
   function slide(x) {
     overlay.style.width = `${x}px`;
@@ -64,6 +68,8 @@ export function mountOverlay(overlay) {
     clicked = 0;
   }
 
+  sync();
+
   slider.addEventListener('mousedown', slideReady);
   slider.addEventListener('touchstart', slideReady);
   window.addEventListener('mouseup', slideFinish);
@@ -75,6 +81,9 @@ export function mountOverlay(overlay) {
     },
     get width() {
       return parseInt(overlay.style.width, 10);
+    },
+    update() {
+      sync();
     },
     teardown() {
       slider.removeEventListener('mousedown', slideReady);
@@ -128,10 +137,20 @@ export function openModal(offsetKey, asDiff, images) {
     return mountOverlay(document.querySelector('.overlay'));
   }
 
+  function syncOverlay() {
+    if (overlay) {
+      overlay.update();
+    }
+  }
+
   window.addEventListener('keyup', testKeys);
 
   const app = view(({ key, diff }) => ['div', { class: 'noop modal', onclick: closeModal }, [
-    ['div', { class: 'container', style: `width:${images[key].width}px;height:${images[key].height}px` },
+    ['div', {
+      class: 'container',
+      style: `width:${images[key].width}px;height:${images[key].height}px`,
+      onupdate: syncOverlay,
+    },
       (diff
         ? [
           ['img', { src: images[key].images.out }],
