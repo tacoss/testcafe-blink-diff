@@ -1,8 +1,10 @@
 import {
-  bind, view, mount, unmount, render, listeners,
+  bind, view, mount, unmount, render, listeners, attributes, classes,
 } from 'somedom';
 
-export const tag = bind(render, listeners());
+export const tag = bind(render, listeners(), attributes({
+  class: classes,
+}));
 
 export function mountOverlay(overlay) {
   let w;
