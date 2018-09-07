@@ -1,3 +1,4 @@
+*.todo
 *.log
 .DS_Store
 dist
