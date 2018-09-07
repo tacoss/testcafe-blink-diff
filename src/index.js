@@ -11,7 +11,7 @@ appScript.parentNode.removeChild(appScript);
 function ImageItem(props, key) {
   return ['li', [
     ['strong', props.label],
-    ['div.flex', [
+    ['.flex', [
       ['img.noop', { src: props.thumbnails.base }],
       ['img.noop', { src: props.thumbnails.actual }],
       ['.info', { class: props.ok ? 'passed' : 'failed' }, [
@@ -26,7 +26,7 @@ function ImageItem(props, key) {
 
 function ImageList() {
   if (!images.length) {
-    return ['div', 'No differences to report'];
+    return ['ul', [['li', 'No differences to report']]];
   }
 
   return ['ul', images.map((x, key) => ImageItem(x, key))];
