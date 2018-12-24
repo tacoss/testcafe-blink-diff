@@ -25,18 +25,18 @@ test('check something here', async t => {
 });
 ```
 
-Run your tests adding `--take-snapshot` to take the **base** screenshots.
+Each time you run tests with `--take-snapshot base` it'll take the **base** screenshots.
 
 ```bash
 $ npx testcafe chrome:headless tests/e2e/cases -s tests/screenshots --take-snapshot
 ```
 
-Now run the same tests without `--take-snapshot` to take the **actual** screenshots to compare with.
+Now run the same tests `--take-snapshot actual` to take the **actual** screenshots to compare with.
 
 Finally, invoke the CLI for generating a simple `generated/index.html` report, e.g.
 
 ```bash
-$ npx testcafe-blink-diff tests/screenshots --open --threshold 0.03 # <= 3% is OK
+$ npx testcafe-blink-diff tests/screenshots --compare base:actual --open --threshold 0.03 # <= 3% is OK
 ```
 
 That's all, explore the generated report and enjoy!
