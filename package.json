@@ -22,14 +22,14 @@
   "dependencies": {
     "blink-diff": "^1.0.13",
     "glob": "^7.1.2",
-    "open": "0.0.5",
+    "open": "^6.4.0",
     "wargs": "^0.8.1"
   },
   "devDependencies": {
     "bili": "^4.2.5",
-    "eslint": "^5.13.0",
-    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint": "^6.4.0",
+    "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.14.0",
-    "somedom": "0.0.7"
+    "somedom": "^0.1.3"
   }
 }
