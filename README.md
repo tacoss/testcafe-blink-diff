@@ -44,3 +44,17 @@ That's all, explore the generated report and enjoy!
 <p align="center">
   <img width="479" height="347" src="screenshot.png">
 </p>
+
+## API Options
+
+`takeSnapshot(t[, label[, options]])`
+
+- `label|options.label` &mdash; Readable name for the taken snapshot
+- `options.as` &mdash;  Valid identifier for later comparison
+- `options.timeout` &mdash; Waiting time before taking snapshots
+- `options.selector` &mdash; String, or `Selector()` to match on the DOM
+- `options.blockOut` &mdash; List of `Selector()` nodes to "block-out" on the snapshot
+
+> "Block-out" means matched DOM nodes are covered by a solid-color overlay, helping to reduce unwanted differences if they change often, e.g. ads
+
+Type `npx testcafe-blink-diff --help` to list all available options.
