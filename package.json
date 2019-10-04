@@ -15,7 +15,8 @@
   ],
   "scripts": {
     "dist": "mkdir -p dist && npm run build",
-    "build": "bili --target node --format iife-min --js buble --name reporter"
+    "build": "bili --format umd-min --module-name reporter --minimal --file-name reporter.umd.js",
+    "prepublish": "npm run dist"
   },
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -26,7 +27,7 @@
     "wargs": "^0.8.1"
   },
   "devDependencies": {
-    "bili": "^4.2.5",
+    "bili": "^4.8.1",
     "eslint": "^6.4.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.14.0",
