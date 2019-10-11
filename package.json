@@ -11,7 +11,7 @@
     "lib/index.html",
     "lib/index.js",
     "lib/builder.js",
-    "dist/reporter.iife.min.js"
+    "dist/reporter.umd.js"
   ],
   "scripts": {
     "dist": "mkdir -p dist && npm run build",
