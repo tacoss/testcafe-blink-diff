@@ -32,5 +32,8 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.14.0",
     "somedom": "^0.1.3"
+  },
+  "peerDependencies": {
+    "testcafe": "^1.5.0"
   }
 }
