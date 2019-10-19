@@ -49,11 +49,15 @@ That's all, explore the generated report and enjoy!
 
 `takeSnapshot(t[, label[, options]])`
 
+> If the given selector does not exists on the DOM, a warning will be raised.
+
 - `label|options.label` &mdash; Readable name for the taken snapshot
 - `options.as` &mdash;  Valid identifier for later comparison
 - `options.timeout` &mdash; Waiting time before taking snapshots
 - `options.selector` &mdash; String, or `Selector()` to match on the DOM
 - `options.blockOut` &mdash; List of `Selector()` nodes to "block-out" on the snapshot
+
+If you set `selector` as an array, then the list of _possible nodes_ will be used to the snapshot.
 
 > "Block-out" means matched DOM nodes are covered by a solid-color overlay, helping to reduce unwanted differences if they change often, e.g. ads
 
