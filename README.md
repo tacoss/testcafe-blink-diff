@@ -56,8 +56,11 @@ That's all, explore the generated report and enjoy!
 - `options.timeout` &mdash; Waiting time before taking snapshots
 - `options.selector` &mdash; String, or `Selector()` to match on the DOM
 - `options.blockOut` &mdash; List of `Selector()` nodes to "block-out" on the snapshot
+- `options.fullPage` &mdash; Enable `fullPage: true` as options passed to `takeScreenshot(...)`
 
 If you set `selector` as an array, then the list of _possible nodes_ will be used to the snapshot.
+
+If no selectors are given, then it'll take page-screenshot of the visible content, unless `fullPage` is enabled.
 
 > "Block-out" means matched DOM nodes are covered by a solid-color overlay, helping to reduce unwanted differences if they change often, e.g. ads
 
