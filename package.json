@@ -23,12 +23,13 @@
   "dependencies": {
     "blink-diff": "^1.0.13",
     "glob": "^7.1.2",
-    "open": "^6.4.0",
-    "wargs": "^0.8.1"
+    "open": "^7.0.0",
+    "wargs": "^0.9.0"
   },
   "devDependencies": {
     "bili": "^4.8.1",
     "eslint": "^6.4.0",
+    "serialize-javascript": ">=2.1.1",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.14.0",
     "somedom": "^0.1.3"
