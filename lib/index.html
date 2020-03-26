@@ -19,7 +19,7 @@
       .failed::before { content: '✗ '; font-size: 30px; }
       .modal { position: fixed; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, .5); overflow: auto; }
       .container { position: absolute; overflow: auto; margin: auto; top: 0; left: 0; right: 0; bottom: 0; }
-      .layer { position: absolute; width: 100%; height: 100%; }
+      .layer { position: absolute; width: 100%; height: 100%; overflow: hidden; }
       .layer > img { display: block; vertical-align: middle; }
       .overlay { border-right: 1px solid rgba(255, 0, 255, .5); overflow: hidden; }
       .slider { position: absolute; z-index: 1; cursor: ew-resize; width: 32px; height: 32px; background-color: #ff00ff; border: 1px solid rgba(255, 0, 255, .5); border-radius: 50%; transition: background-color .3s }

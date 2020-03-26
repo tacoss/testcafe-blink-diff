@@ -145,19 +145,33 @@ export function openModal(offsetKey, asDiff, images) {
     }
   }
 
+  function scaleImage(img) {
+    if (img.width > screen.width || img.height > screen.height) {
+      return { width: img.width / 2, height: img.height / 2 };
+    }
+  }
+
+  function scaleOverlay(img) {
+    if (img.width > screen.width || img.height > screen.height) {
+      return 'width:100%;height:100%';
+    }
+
+    return `width:${img.width}px;height:${img.height}px`;
+  }
+
   window.addEventListener('keyup', testKeys);
 
   const app = view(({ key, diff }) => ['.noop.modal', { onclick: closeModal }, [
-    ['.container', { style: `width:${images[key].width}px;height:${images[key].height}px`, onupdate: syncOverlay },
+    ['.container', { style: scaleOverlay(images[key]), onupdate: syncOverlay },
       (diff
         ? [
-          ['img', { src: images[key].images.out }],
+          ['img', { src: images[key].images.out, ...scaleImage(images[key]) }],
         ] : [
           ['.layer', [
-            ['img.a', { src: images[key].images.actual }],
+            ['img.a', { src: images[key].images.actual, ...scaleImage(images[key]) }],
           ]],
           ['.layer.overlay', [
-            ['img.b', { src: images[key].images.base }],
+            ['img.b', { src: images[key].images.base, ...scaleImage(images[key]) }],
           ]],
         ])
         .concat([
