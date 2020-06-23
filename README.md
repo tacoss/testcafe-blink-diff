@@ -1,3 +1,4 @@
+![build](https://github.com/tacoss/testcafe-blink-diff/workflows/build/badge.svg)
 [![NPM version](https://badge.fury.io/js/testcafe-blink-diff.png)](http://badge.fury.io/js/testcafe-blink-diff)
 [![Known Vulnerabilities](https://snyk.io/test/npm/testcafe-blink-diff/badge.svg)](https://snyk.io/test/npm/testcafe-blink-diff)
 
