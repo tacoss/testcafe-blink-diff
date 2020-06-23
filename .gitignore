@@ -2,4 +2,5 @@
 *.log
 .DS_Store
 dist
+e2e/screens
 node_modules
