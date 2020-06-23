@@ -24,11 +24,21 @@
       .overlay { border-right: 1px solid rgba(255, 0, 255, .5); overflow: hidden; }
       .slider { position: absolute; z-index: 1; cursor: ew-resize; width: 32px; height: 32px; background-color: #ff00ff; border: 1px solid rgba(255, 0, 255, .5); border-radius: 50%; transition: background-color .3s }
       .close { position: fixed; right: 10px; top: 10px; background-color: rgba(0, 0, 0, .5); width: 30px; height: 30px; border-radius: 50%; color: white; border: 0; }
+      .keys { position: fixed; left: 5px; bottom: 5px; background-color: rgba(255, 255, 255, .8); }
+      .keys kbd { border-radius: 3px; background-color: rgba(255, 255, 255, .8); box-shadow: 0 1px 3px rgba(0, 0, 0, .5); padding: 0 .3em; }
+      .keys li { margin: 0; }
+      .keys li + li { margin-top: 5px; }
     </style>
   </head>
   <body>
     <script type="application/json" id="app">/* json */</script>
     <script>/* code */
 </script>
+    <ul class="keys">
+      <li><kbd>ESC</kbd> &mdash; <small>To close open Modal</small></li>
+      <li><kbd>SPACE</kbd> &mdash; <small>Switch between diff/compare views in Modal mode</small></li>
+      <li><kbd>LEFT</kbd> <small>or</small> <kbd>RIGHT</kbd> &mdash; <small>Go to previous and next image in Modal mode</small></li>
+      <li><kbd>SHIFT</kbd> <small>+</small> <kbd>LEFT</kbd> <small>or</small> <kbd>RIGHT</kbd> &mdash; <small>Move handle horizontally from diff view on Modal mode</small></li>
+    </ul>
   </body>
 </html>

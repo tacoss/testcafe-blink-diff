@@ -119,7 +119,7 @@ export function openModal(offsetKey, asDiff, images) {
     if (e.keyCode === 37) modal.prev(e);
     if (e.keyCode === 39) modal.next(e);
 
-    if (e.keyCode === 9) {
+    if (e.keyCode === 32) {
       e.preventDefault();
       modal.change();
     }
