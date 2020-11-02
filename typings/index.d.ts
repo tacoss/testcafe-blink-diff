@@ -48,8 +48,8 @@ declare module 'testcafe-blink-diff' {
 	 * @description If the given selector does not exists on the DOM, a warning will be raised.
 	 * @description Type `npx testcafe-blink-diff --help` to list all available options.
 	 * @param t The TestController instance
-	 * @param label Readable name for the taken snapshot
-	 * @param options
+	 * @param labelOrOptions Readable name for the taken snapshot, or the {@link TestcafeBlinkDiffOptions} options
+	 * @param options Options to pass to the the takeSnapshot function
 	 */
-    export function takeSnapshot(t: TestController, label: string, options?: TestcafeBlinkDiffOptions): TestController;
+    export function takeSnapshot(t: TestController, labelOrOptions?: string | TestcafeBlinkDiffOptions, options?: TestcafeBlinkDiffOptions): TestController;
 }
