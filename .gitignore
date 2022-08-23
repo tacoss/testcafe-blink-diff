@@ -2,6 +2,7 @@
 *.log
 .DS_Store
 dist
+generated
 e2e/screens
 node_modules
 package-lock.json

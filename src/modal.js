@@ -167,10 +167,10 @@ export function openModal(offsetKey, asDiff, images) {
         ? [
           ['img', { src: images[key].images.out, ...scaleImage(images[key]) }],
         ] : [
-          ['.layer', [
+          ['.layer', null, [
             ['img.a', { src: images[key].images.actual, ...scaleImage(images[key]) }],
           ]],
-          ['.layer.overlay', [
+          ['.layer.overlay', null, [
             ['img.b', { src: images[key].images.base, ...scaleImage(images[key]) }],
           ]],
         ])

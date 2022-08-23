@@ -41,12 +41,12 @@ test('should render "It works!"', async t => {
     Selector('.animated'),
   ];
 
-  await takeSnapshot(t, { label: 'before_assert_blockout', fullPage: true });
+  await takeSnapshot(t, { label: 'before_assert_blockout', blockOut: elements });
 
   await t
     .expect(Selector('h1').exists).ok()
     .expect(Selector('h1').visible).ok()
     .expect(Selector('h1').innerText).contains('It works!');
 
-  await takeSnapshot(t, { label: 'after_assert_blockout', blockOut: elements, fullPage: true });
+  await takeSnapshot(t, { label: 'after_assert_blockout', blockOut: elements });
 });
