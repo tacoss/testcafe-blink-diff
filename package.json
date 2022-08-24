@@ -24,9 +24,10 @@
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "blink-diff": "^1.0.13",
     "glob": "^7.1.6",
     "global-or-local": "^0.1.7",
+    "native-image-diff": "^0.1.14",
+    "node-libpng": "^0.2.20",
     "open": "^7.3.0",
     "wargs": "^0.9.6"
   },
