@@ -1,59 +1,70 @@
 import {
-  bind, view, mount, unmount, render, listeners, attributes, classes,
+  bind, view, unmount, render, listeners, attributes, classes,
 } from 'somedom';
 
 export const tag = bind(render, listeners(), attributes({
   class: classes,
 }));
 
-export function mountOverlay(overlay) {
-  let w;
-  let h;
+export function mountOverlay(overlay, slider) {
+  let container;
+  let maximum;
   let clicked;
-
-  const slider = mount(overlay.parentNode, ['div', { class: 'slider' }], tag);
+  function set() {
+    slider.current.style.transform = `translateY(${scrollY}px)`;
+  }
 
   function sync() {
-    w = overlay.parentNode.offsetWidth;
-    h = overlay.parentNode.offsetHeight;
-
-    overlay.style.width = `${w / 2}px`;
-
-    slider.style.left = `${(w / 2) - (slider.offsetWidth / 2)}px`;
-    slider.style.top = `${(h / 2) - (slider.offsetHeight / 2)}px`;
+    container = overlay.current.parentNode.offsetWidth;
+    maximum = Math.min(document.body.clientWidth, container);
+    slider.current.style.left = `${(maximum / 2) - (slider.current.offsetWidth / 2)}px`;
+    overlay.current.style.width = `${maximum / 2}px`;
   }
 
   function slide(x) {
-    overlay.style.width = `${x}px`;
-    slider.style.left = `${overlay.offsetWidth - (slider.offsetWidth / 2)}px`;
+    overlay.current.style.width = `${x}px`;
+    slider.current.style.left = `${overlay.current.offsetWidth - (slider.current.offsetWidth / 2)}px`;
   }
 
   function getCursorPos(e) {
-    const a = overlay.getBoundingClientRect();
+    const a = overlay.current.getBoundingClientRect();
 
     let x = (e || window.event).pageX - a.left;
-
     x -= window.pageXOffset;
 
     return x;
   }
 
-  function slideMove(e) {
-    let pos;
+  let moving;
+  let t;
+  function clickUp() {
+    if (!moving) {
+      moving = true;
+      document.body.classList.add('moving');
+    }
 
+    clearTimeout(t);
+    t = setTimeout(() => {
+      if (moving) {
+        moving = false;
+        document.body.classList.remove('moving');
+      }
+    }, 1260);
+  }
+
+  function slideMove(e) {
+    clearTimeout(t);
+
+    let pos;
     if (!clicked) {
+      clickUp();
       return false;
     }
 
     pos = getCursorPos(e);
 
-    if (pos < 0) {
-      pos = 0;
-    }
-
-    if (pos > w) {
-      pos = w;
-    }
+    if (pos < 0) pos = 0;
+    if (pos > container) pos = container;
 
     slide(pos);
   }
@@ -61,67 +72,84 @@ export function mountOverlay(overlay) {
   function slideReady(e) {
     e.preventDefault();
     clicked = 1;
-
-    window.addEventListener('mousemove', slideMove);
-    window.addEventListener('touchmove', slideMove);
   }
 
   function slideFinish() {
+    clickUp();
     clicked = 0;
   }
 
   sync();
-
-  slider.addEventListener('mousedown', slideReady);
-  slider.addEventListener('touchstart', slideReady);
-  window.addEventListener('mouseup', slideFinish);
-  window.addEventListener('touchstop', slideFinish);
+  slider.current.addEventListener('mousedown', slideReady);
+  slider.current.addEventListener('touchstart', slideReady);
+  addEventListener('mouseup', slideFinish);
+  addEventListener('touchstop', slideFinish);
+  addEventListener('mousemove', slideMove);
+  addEventListener('touchmove', slideMove);
+  addEventListener('resize', sync);
+  addEventListener('scroll', set);
 
   return {
     set width(value) {
       slide(value);
     },
     get width() {
-      return parseInt(overlay.style.width, 10);
+      return parseInt(overlay.current.style.width, 10);
     },
     update() {
-      sync();
+      clickUp();
     },
     teardown() {
-      slider.removeEventListener('mousedown', slideReady);
-      slider.removeEventListener('touchstart', slideReady);
-      window.removeEventListener('mouseup', slideFinish);
-      window.removeEventListener('touchstop', slideFinish);
-      window.removeEventListener('mousemove', slideMove);
-      window.removeEventListener('touchmove', slideMove);
-      unmount(slider);
+      slider.current.removeEventListener('mousedown', slideReady);
+      slider.current.removeEventListener('touchstart', slideReady);
+      removeEventListener('mouseup', slideFinish);
+      removeEventListener('touchstop', slideFinish);
+      removeEventListener('mousemove', slideMove);
+      removeEventListener('touchmove', slideMove);
+      removeEventListener('resize', sync);
+      removeEventListener('scroll', set);
+      unmount(slider.current);
     },
   };
 }
 
-export function openModal(offsetKey, asDiff, images) {
+export function openModal(offsetKey, images) {
   let overlay;
   let modal;
-
-  function onClose(callback) {
-    window.removeEventListener('keyup', callback);
+  let top;
+  function onClose(onKeys) {
+    window.removeEventListener('keydown', onKeys);
 
     document.body.style.overflow = '';
 
     if (overlay) {
       overlay.teardown();
+      overlay = null;
     }
 
     modal.unmount();
+    scrollTo({ behavior: 'instant', left: 0, top });
   }
 
   function testKeys(e) {
-    if (e.keyCode === 37) modal.prev(e);
-    if (e.keyCode === 39) modal.next(e);
+    if (e.keyCode === 9) {
+      e.preventDefault();
+      if (e.shiftKey) modal.prev(e);
+      else modal.next(e);
+      overlay.update();
+    }
+
+    if (e.keyCode === 37 || e.keyCode === 39) {
+      e.preventDefault();
+      if (e.keyCode === 37) modal.left(e);
+      if (e.keyCode === 39) modal.right(e);
+      overlay.update();
+    }
 
     if (e.keyCode === 32) {
       e.preventDefault();
       modal.change();
+      overlay.update();
     }
 
     if (e.keyCode === 27) {
@@ -135,94 +163,68 @@ export function openModal(offsetKey, asDiff, images) {
     }
   }
 
-  function addOverlay() {
-    return mountOverlay(document.querySelector('.overlay'));
-  }
-
-  function syncOverlay() {
-    if (overlay) {
-      overlay.update();
-    }
-  }
-
   function scaleImage(img) {
-    if (img.width > screen.width || img.height > screen.height) {
-      return { width: img.width / 2, height: img.height / 2 };
-    }
+    return { width: img.width / img.dpi, height: img.height / img.dpi };
   }
 
   function scaleOverlay(img) {
-    if (img.width > screen.width || img.height > screen.height) {
-      return 'width:100%;height:100%';
-    }
-
-    return `width:${img.width}px;height:${img.height}px`;
+    return [
+      `width:${img.width / img.dpi}px;height:${img.height / img.dpi}px`,
+      (img.width / img.dpi) < document.body.clientWidth ? `;right:0` : '',
+      (img.height / img.dpi) < document.body.clientHeight ? `;bottom:0` : '',
+    ].join('');
   }
 
-  window.addEventListener('keyup', testKeys);
+  window.addEventListener('keydown', testKeys);
 
-  const app = view(({ key, diff }) => ['.noop.modal', { onclick: closeModal }, [
-    ['.container', { style: scaleOverlay(images[key]), onupdate: syncOverlay },
-      (diff
-        ? [
-          ['img', { src: images[key].images.out, ...scaleImage(images[key]) }],
-        ] : [
-          ['.layer', [
-            ['img.a', { src: images[key].images.actual, ...scaleImage(images[key]) }],
-          ]],
-          ['.layer.overlay', [
-            ['img.b', { src: images[key].images.base, ...scaleImage(images[key]) }],
-          ]],
-        ])
-        .concat([
+  const overlayRef = {};
+  const sliderRef = {};
+
+  const app = view(({ key, diff }) => {
+    const current = images[key];
+    const props = scaleImage(current);
+
+    return ['.noop.modal', {
+      onclick: closeModal,
+      style: scaleOverlay(current),
+      oncreate(el) {
+        requestAnimationFrame(() => el.classList.add('ready'));
+      },
+    },
+      ['.container', null, [
+        ['.layer', null, [
+          ['img.a', { src: current.images.actual, ...props }],
+        ]],
+        ['.layer.overlay', { ref: overlayRef }, [
+          ['img.b', { src: current.images.base, ...props }],
+        ]],
+        ['.slider', { ref: sliderRef }],
+        ['span.right', null, [
+          ['small', null, ['b', null, `${current.label} ${current.width / current.dpi}x${current.height / current.dpi} (${key + 1}/${images.length})`]],
           ['button.close', { onclick: () => closeModal() }, '×'],
-        ]),
-    ],
-  ]], {
-    diff: asDiff,
+        ]],
+        diff ? ['.layer.difference', null, [
+          ['img.c', { src: current.images.out, ...props }],
+        ]] : null,
+      ]],
+    ];
+  }, {
+    diff: true,
     key: offsetKey,
   }, {
-    next: e => ({ key, diff }) => {
-      if (!diff && e.shiftKey) {
-        overlay.width = Math.min(images[key].width, overlay.width + (images[key].width * 0.25));
-        return;
-      }
-
-      return {
-        key: Math.min(key + 1, images.length - 1),
-      };
+    next: e => ({ key }) => ({ key: key < images.length - 1 ? Math.min(key + 1, images.length - 1) : 0 }),
+    prev: e => ({ key }) => ({ key: key > 0 ? Math.max(key - 1, 0) : images.length - 1 }),
+    left: e => () => {
+      overlay.width = Math.max(0, overlay.width - (!e.shiftKey ? 100 : 10));
     },
-    prev: e => ({ key, diff }) => {
-      if (!diff && e.shiftKey) {
-        overlay.width = Math.max(0, overlay.width - (images[key].width * 0.25));
-        return;
-      }
-
-      return {
-        key: Math.max(key - 1, 0),
-      };
+    right: e => ({ key }) => {
+      overlay.width = Math.min(images[key].width, overlay.width + (!e.shiftKey ? 100 : 10));
     },
-    change: () => ({ diff }) => {
-      if (overlay) {
-        overlay.teardown();
-        overlay = null;
-      } else if (diff) {
-        setTimeout(() => {
-          overlay = addOverlay();
-        });
-      }
-
-      return {
-        diff: !diff,
-      };
-    },
+    change: () => ({ diff }) => ({ diff: !diff }),
   });
 
+  top = scrollY;
   modal = app(document.body, tag);
-
-  document.body.style.overflow = 'hidden';
-
-  if (!asDiff) {
-    overlay = addOverlay();
-  }
+  overlay = mountOverlay(overlayRef, sliderRef);
+  scrollTo({ behavior: 'instant', left: 0, top: 0 });
 }

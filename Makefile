@@ -15,3 +15,9 @@ deps: package*.json
 
 clean:
 	@rm -rf dist/*
+
+release: deps
+ifneq ($(CI),)
+	@echo '//registry.npmjs.org/:_authToken=$(NODE_AUTH_TOKEN)' > .npmrc
+	@npm version patch
+endif
