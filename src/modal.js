@@ -1,5 +1,5 @@
 import {
-  bind, view, mount, unmount, render, listeners, attributes, classes,
+  bind, view, unmount, render, listeners, attributes, classes,
 } from 'somedom';
 
 export const tag = bind(render, listeners(), attributes({
@@ -97,7 +97,7 @@ export function mountOverlay(overlay, slider) {
       return parseInt(overlay.current.style.width, 10);
     },
     update() {
-      clickUp(3000);
+      clickUp();
     },
     teardown() {
       slider.current.removeEventListener('mousedown', slideReady);
