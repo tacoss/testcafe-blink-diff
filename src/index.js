@@ -16,20 +16,17 @@ function ImageItem(props, key) {
       ['img.noop', { src: props.thumbnails.actual }],
       ['.info', { class: props.ok ? 'passed' : 'failed' }, [
         ['h3', null, props.ok ? 'It passed.' : 'It did not passed'],
-        ['h2', null, `Diff: ${props.diff}%`],
-        ['button.noop', { onclick: () => openModal(key, true, images) }, 'Open diff'],
-        ['button.noop', { onclick: () => openModal(key, false, images) }, 'Compare'],
+        ['h2', null, props.diff > 0 ? `Diff: ${props.diff}%` : 'No differences'],
+        ['button.noop', { onclick: () => openModal(key, images) }, 'Compare'],
       ]],
     ]],
   ]];
 }
 
 function ImageList() {
-  if (!images.length) {
-    return ['ul', null, [['li', null, 'No differences to report']]];
-  }
-
-  return ['ul', null, images.map((x, key) => ImageItem(x, key))];
+  return !images.length
+    ? ['ul', null, [['li', null, 'No differences to report']]]
+    : ['ul', null, images.map((x, key) => ImageItem(x, key))];
 }
 
 mount([ImageList], tag);
