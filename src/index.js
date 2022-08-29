@@ -1,5 +1,3 @@
-/* global window, document */
-
 import { mount } from 'somedom';
 import { tag, openModal } from './modal';
 

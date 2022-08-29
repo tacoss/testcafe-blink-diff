@@ -18,6 +18,7 @@
     "build": "bili --format umd-min --module-name reporter --minimal --file-name reporter.umd.js",
     "serve": "sirv e2e/public --port 3000",
     "prepublish": "npm run dist",
+    "pretest": "eslint src lib",
     "test": "npm run test:e2e -- -a 'npm run serve' e2e/cases",
     "test:e2e": "BASE_URL=http://localhost:3000 testcafe ${BROWSER:-chrome:headless} --screenshots-full-page --take-snapshot ${SNAPSHOT} -s e2e/screens"
   },
@@ -26,9 +27,9 @@
   "dependencies": {
     "glob": "^7.1.6",
     "global-or-local": "^0.1.7",
-    "native-image-diff": "^0.1.14",
-    "node-libpng": "^0.2.20",
     "open": "^7.3.0",
+    "pixelmatch": "^5.3.0",
+    "pngjs": "^6.0.0",
     "wargs": "^0.9.6"
   },
   "devDependencies": {

@@ -170,8 +170,8 @@ export function openModal(offsetKey, images) {
   function scaleOverlay(img) {
     return [
       `width:${img.width / img.dpi}px;height:${img.height / img.dpi}px`,
-      (img.width / img.dpi) < document.body.clientWidth ? `;right:0` : '',
-      (img.height / img.dpi) < document.body.clientHeight ? `;bottom:0` : '',
+      (img.width / img.dpi) < document.body.clientWidth ? ';right:0' : '',
+      (img.height / img.dpi) < document.body.clientHeight ? ';bottom:0' : '',
     ].join('');
   }
 
@@ -191,29 +191,29 @@ export function openModal(offsetKey, images) {
         requestAnimationFrame(() => el.classList.add('ready'));
       },
     },
-      ['.container', null, [
-        ['.layer', null, [
-          ['img.a', { src: current.images.actual, ...props }],
-        ]],
-        ['.layer.overlay', { ref: overlayRef }, [
-          ['img.b', { src: current.images.base, ...props }],
-        ]],
-        ['.slider', { ref: sliderRef }],
-        ['span.right', null, [
-          ['small', null, ['b', null, `${current.label} ${current.width / current.dpi}x${current.height / current.dpi} (${key + 1}/${images.length})`]],
-          ['button.close', { onclick: () => closeModal() }, '×'],
-        ]],
-        diff ? ['.layer.difference', null, [
-          ['img.c', { src: current.images.out, ...props }],
-        ]] : null,
+    ['.container', null, [
+      ['.layer', null, [
+        ['img.a', { src: current.images.actual, ...props }],
       ]],
+      ['.layer.overlay', { ref: overlayRef }, [
+        ['img.b', { src: current.images.base, ...props }],
+      ]],
+      ['.slider', { ref: sliderRef }],
+      ['span.right', null, [
+        ['small', null, ['b', null, `${current.label} ${current.width / current.dpi}x${current.height / current.dpi} (${key + 1}/${images.length})`]],
+        ['button.close', { onclick: () => closeModal() }, '×'],
+      ]],
+      diff ? ['.layer.difference', null, [
+        ['img.c', { src: current.images.out, ...props }],
+      ]] : null,
+    ]],
     ];
   }, {
     diff: true,
     key: offsetKey,
   }, {
-    next: e => ({ key }) => ({ key: key < images.length - 1 ? Math.min(key + 1, images.length - 1) : 0 }),
-    prev: e => ({ key }) => ({ key: key > 0 ? Math.max(key - 1, 0) : images.length - 1 }),
+    next: () => ({ key }) => ({ key: key < images.length - 1 ? Math.min(key + 1, images.length - 1) : 0 }),
+    prev: () => ({ key }) => ({ key: key > 0 ? Math.max(key - 1, 0) : images.length - 1 }),
     left: e => () => {
       overlay.width = Math.max(0, overlay.width - (!e.shiftKey ? 100 : 10));
     },
