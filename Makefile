@@ -19,5 +19,5 @@ clean:
 release: deps
 ifneq ($(CI),)
 	@echo '//registry.npmjs.org/:_authToken=$(NODE_AUTH_TOKEN)' > .npmrc
-	@npm version patch
+	@npm version $(USE_RELEASE_VERSION)
 endif

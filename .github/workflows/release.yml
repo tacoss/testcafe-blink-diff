@@ -20,6 +20,7 @@ jobs:
 
           make release
         env:
+          USE_RELEASE_VERSION: ${{ secrets.RELEASE_VERSION }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Push changes
         uses: ad-m/github-push-action@master
