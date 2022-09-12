@@ -37,8 +37,10 @@ Now run the same tests `--take-snapshot actual` to take the **actual** screensho
 Finally, invoke the CLI for generating a simple `generated/index.html` report, e.g.
 
 ```bash
-$ npx testcafe-blink-diff tests/screenshots --compare base:actual --open --threshold 0.03 # <= 3% is OK
+$ npx testcafe-blink-diff tests/screenshots --compare base:actual --open --threshold 0.03
 ```
+
+> Note that v0.4.x will still treat `0.03` as `3%` which may be confusing &mdash; since v0.5.x this value is kept as is, so `0.03` will be `0.03%` and nothing else!
 
 That's all, explore the generated report and enjoy!
 
