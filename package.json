@@ -25,12 +25,12 @@
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "glob": "^7.1.6",
+    "glob": "^8.0.3",
     "global-or-local": "^0.1.7",
-    "open": "^7.3.0",
+    "open": "^8.4.0",
     "pixelmatch": "^5.3.0",
     "pngjs": "^6.0.0",
-    "wargs": "^0.9.6"
+    "wargs": "^0.10.0"
   },
   "devDependencies": {
     "bili": "^5.0.5",
@@ -38,14 +38,14 @@
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.1",
     "is-svg": ">=4.2.2",
-    "sirv-cli": "^1.0.8",
-    "somedom": "^0.4.19",
+    "sirv-cli": "^1.0.14",
+    "somedom": "^0.4.20",
     "testcafe": "^2.0.1"
   },
   "peerDependencies": {
-    "testcafe": "^2.0.1"
+    "testcafe": "*"
   },
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=14.0.0"
   }
 }
