@@ -48,6 +48,21 @@ That's all, explore the generated report and enjoy!
   <img width="479" height="347" src="screenshot.png">
 </p>
 
+## CLI Options (since v0.6.x)
+
+- `as` the identifier for the later comparison
+- [`quality`] by default snapshot are taken as png in full resolution - use this options to use jpeg compression.
+- [`mw`] max width boundary - resize the screenshots that are larger than this value
+- [`mh`] max height boundary - resize the screenshots that are larger than this value
+
+### Usage
+
+- `--take-snapshot base`
+- `--take-snapshot as=base`
+- `--take-snapshot as=base,quality=75`
+- `--take-snapshot as=base,mw=1200`
+- `--take-snapshot as=base,mw=800,mh=600,quality=90`
+
 ## API Options
 
 `takeSnapshot(t[, label[, options]])`
