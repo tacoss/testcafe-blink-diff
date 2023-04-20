@@ -69,3 +69,9 @@ If no selectors are given, then it'll take page-screenshot of the visible conten
 > "Block-out" means matched DOM nodes are covered by a solid-color overlay, helping to reduce unwanted differences if they change often, e.g. ads
 
 Type `npx testcafe-blink-diff --help` to list all available options.
+
+## Contributors
+
+<a href="https://github.com/tacoss/testcafe-blink-diff/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=tacoss/testcafe-blink-diff" />
+</a>
