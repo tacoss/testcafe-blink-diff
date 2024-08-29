@@ -5,6 +5,8 @@ fixture('Testing')
 .page(`${process.env.BASE_URL}/`);
 
 test('should render "It works!"', async t => {
+  process.env.TAKE_SNAPSHOT = "1";
+
   await t.wait(1000);
   await takeSnapshot(t, 'before_assert_it_works');
 
@@ -20,6 +22,8 @@ fixture('Testing fullPage')
 .page(`${process.env.BASE_URL}/`);
 
 test('should render "It works!"', async t => {
+  process.env.TAKE_SNAPSHOT = "1";
+
   await t.wait(1000);
   await takeSnapshot(t, { label: 'before_assert_fullpage', fullPage: true });
 
@@ -35,6 +39,8 @@ fixture('Testing blockOut')
 .page(`${process.env.BASE_URL}/`);
 
 test('should render "It works!"', async t => {
+  process.env.TAKE_SNAPSHOT = "1";
+
   await t.wait(1000);
 
   const elements = [

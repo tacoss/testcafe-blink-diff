@@ -21,7 +21,7 @@
     "prepublish": "npm run dist",
     "pretest": "eslint src lib",
     "test": "npm run test:e2e -- -a 'npm run serve' e2e/cases",
-    "test:e2e": "BASE_URL=http://localhost:3000 testcafe ${BROWSER:-chrome:headless} --screenshots-full-page --take-snapshot ${SNAPSHOT} -s e2e/screens"
+    "test:e2e": "BASE_URL=http://localhost:3000 testcafe ${BROWSER:-chrome:headless} --screenshots-full-page -s e2e/screens"
   },
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -38,6 +38,7 @@
     "eslint": "^7.11.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.1",
+    "image-size": "^1.1.1",
     "is-svg": ">=4.2.2",
     "mkdirp": "^3.0.1",
     "rimraf": "^6.0.1",
