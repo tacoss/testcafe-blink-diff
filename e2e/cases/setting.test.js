@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-const { join } = require('node:path');
+import { join } from 'node:path';
 
 import sizeOf from 'image-size';
 import { rimrafSync } from 'rimraf';
