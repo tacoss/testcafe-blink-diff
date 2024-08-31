@@ -19,7 +19,7 @@
     "build": "bili --format umd-min --module-name reporter --minimal --file-name reporter.umd.js",
     "serve": "sirv e2e/public --port 3000",
     "prepublish": "npm run dist",
-    "pretest": "eslint src lib",
+    "pretest": "eslint src lib e2e",
     "test": "npm run test:e2e -- -a 'npm run serve' e2e/cases",
     "test:e2e": "BASE_URL=http://localhost:3000 testcafe ${BROWSER:-chrome:headless} --screenshots-full-page -s e2e/screens -q"
   },
