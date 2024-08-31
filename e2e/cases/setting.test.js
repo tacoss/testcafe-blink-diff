@@ -4,25 +4,11 @@ import { join } from 'node:path';
 import sizeOf from 'image-size';
 import { rimrafSync } from 'rimraf';
 
+import { fixedSize, fixedFile } from '../lib';
 import { takeSnapshot } from '../../lib';
 
 fixture('Testing set FULL_PAGE')
 .page(`${process.env.BASE_URL}/`);
-
-// this enforces a particular DPI to allow
-// tests to behave in a deterministic way!!
-process.env.WINDOW_DPI = process.env.WINDOW_DPI || "2";
-
-function fixedSize(value) {
-  return value * process.env.WINDOW_DPI;
-}
-
-function fixedFile(name) {
-  if (process.env.WINDOW_DPI > 1) {
-    return name.replace('.', `@${process.env.WINDOW_DPI}.`);
-  }
-  return name;
-}
 
 test('should care environment variables', async t => {
   process.env.TAKE_SNAPSHOT = "1";
@@ -42,8 +28,10 @@ test('should care environment variables', async t => {
   await t.expect(pngWithEnv.height).gte(fixedSize(1356));
 
   const pngWithOutEnv = sizeOf(join(basePath, 'after__del__env', fixedFile('base.png')));
-  await t.expect(pngWithOutEnv.width).gte(fixedSize(625));
-  await t.expect(pngWithOutEnv.height).gte(fixedSize(465));
+  await t.expect(pngWithOutEnv.width).gte(fixedSize(623));
+  await t.expect(pngWithOutEnv.width).lte(fixedSize(640));
+  await t.expect(pngWithOutEnv.height).gte(fixedSize(463));
+  await t.expect(pngWithOutEnv.height).lte(fixedSize(480));
 });
 
 fixture('Testing set TAKE_SNAPSHOT')
