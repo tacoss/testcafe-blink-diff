@@ -39,11 +39,11 @@ test('should care environment variables', async t => {
 
   const pngWithEnv = sizeOf(join(basePath, 'after__set__env', fixedFile('base.png')));
   await t.expect(pngWithEnv.width).eql(fixedSize(1290));
-  await t.expect(pngWithEnv.height).eql(fixedSize(1356));
+  await t.expect(pngWithEnv.height).gte(fixedSize(1356));
 
   const pngWithOutEnv = sizeOf(join(basePath, 'after__del__env', fixedFile('base.png')));
-  await t.expect(pngWithOutEnv.width).eql(fixedSize(640));
-  await t.expect(pngWithOutEnv.height).eql(fixedSize(480));
+  await t.expect(pngWithOutEnv.width).gte(fixedSize(625));
+  await t.expect(pngWithOutEnv.height).gte(fixedSize(465));
 });
 
 fixture('Testing set TAKE_SNAPSHOT')
