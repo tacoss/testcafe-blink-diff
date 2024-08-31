@@ -4,6 +4,10 @@
     "node": true,
     "browser": true
   },
+  "globals": {
+    "fixture": "readonly",
+    "test": "readonly"
+  },
   "extends": "airbnb-base",
   "parserOptions": {
     "sourceType": "module"

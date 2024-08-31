@@ -5,6 +5,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: tacoss/nodejs@master
+      - name: Run tests
+        uses: DevExpress/testcafe-action@latest
         with:
-          args: make ci
+          args: "chrome --screenshots-full-page -s e2e/screens --color -a 'npm run serve' e2e/cases"
+        env:
+          BASE_URL: http://localhost:3000
+          WINDOW_DPI: 1
