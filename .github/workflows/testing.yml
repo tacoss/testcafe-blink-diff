@@ -1,14 +1,37 @@
 name: build
 on: [push]
 jobs:
-  build-test:
-    runs-on: ubuntu-latest
+  test:
+    name: test-${{ matrix.env.name }}-node${{ matrix.node }}-${{ matrix.env.browser }}
+    strategy:
+      matrix:
+        env: [
+          { name: ubuntu, os: ubuntu-latest, browser: chrome },
+          { name: windows, os: windows-latest, browser: edge }
+        ]
+        node: [18, 20, 22]
+    runs-on: ${{ matrix.env.os }}
+    env:
+      # XXX: adjust to node 18's defaults changes
+      #      https://stackoverflow.com/questions/77142563/nodejs-18-breaks-dns-resolution-of-localhost-from-127-0-0-1-to-1
+      NODE_OPTIONS: --dns-result-order=ipv4first
+      BASE_URL: http://localhost:3000
+      BROWSER: ${{ matrix.env.browser }}
+      WINDOW_DPI: 1
     steps:
-      - uses: actions/checkout@v1
-      - name: Run tests
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm i
+      - name: Run test (Ubuntu)
+        if: ${{ matrix.env.name == 'ubuntu' }}
         uses: DevExpress/testcafe-action@latest
         with:
-          args: "chrome --screenshots-full-page -s e2e/screens --color -a 'npm run serve' e2e/cases"
-        env:
-          BASE_URL: http://localhost:3000
-          WINDOW_DPI: 1
+          # XXX: default is false, and install latest TestCafe,
+          #      since this, ubuntu's tests run with latest TestCafe everytime
+          skip-install: false
+          args: "--config-file e2e/.testcaferc.json ${{ matrix.env.browser }}"
+      - name: Run test (Windows)
+        if: ${{ matrix.env.name == 'windows' }}
+        run: npx testcafe --config-file e2e/.testcaferc.json ${{ matrix.env.browser }}
