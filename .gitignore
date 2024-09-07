@@ -3,6 +3,8 @@
 .DS_Store
 dist
 generated
+e2e/file/screens
+e2e/generated-*
 e2e/screens
 node_modules
 package-lock.json
