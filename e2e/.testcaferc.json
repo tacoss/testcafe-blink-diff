@@ -1,0 +1,8 @@
+{
+  "src": "e2e/cases",
+  "screenshots": {
+    "path": "e2e/screens",
+    "fullPage": true
+  },
+  "appCommand": "npm run serve"
+}

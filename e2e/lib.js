@@ -38,6 +38,10 @@ function callTC(targetTest, additionalArgs) {
   return callNpx(baseArgs.concat(additionalArgs));
 }
 
+function callTBD(argArray) {
+  return callNpx(['testcafe-blink-diff', ...argArray]);
+}
+
 export {
-  getBaseUrl, fixedSize, fixedFile, callTC,
+  getBaseUrl, fixedSize, fixedFile, callTC, callTBD,
 };

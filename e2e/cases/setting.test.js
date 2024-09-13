@@ -11,6 +11,9 @@ fixture('Testing set FULL_PAGE').page(getBaseUrl());
 
 test('should care environment variables', async t => {
   process.env.TAKE_SNAPSHOT = '1';
+  // XXX: set snapshot name to fix what without settings
+  //      makes set to commandline's browser name
+  process.env.SNAPSHOT_NAME = 'base';
 
   const basePath = join('e2e', 'screens', 'Testing_set_FULL__PAGE');
   rimrafSync(basePath);
@@ -36,6 +39,10 @@ test('should care environment variables', async t => {
 fixture('Testing set TAKE_SNAPSHOT').page(getBaseUrl());
 
 test('should care environment variables', async t => {
+  // XXX: set snapshot name to fix what without settings
+  //      makes set to commandline's browser name
+  process.env.SNAPSHOT_NAME = 'base';
+
   const basePath = join('e2e', 'screens', 'Testing_set_TAKE__SNAPSHOT');
   rimrafSync(basePath);
 
