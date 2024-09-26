@@ -8,7 +8,7 @@ import {
   getBaseUrl, fixedSize, fixedFile, callTC,
 } from '../lib';
 
-fixture('Testing cli --take-snapshot').page(getBaseUrl());
+fixture('Testing cli testcafe --take-snapshot').page(getBaseUrl());
 
 test('should care arg without name', async t => {
   const basePath = join('e2e', 'screens', 'Testing_cli', 'assert__it');
@@ -34,7 +34,7 @@ test('should care arg with name', async t => {
   await t.expect(existsSync(join(basePath, fixedFile('bar.png')))).notOk();
 });
 
-fixture('Testing cli --full-page').page(getBaseUrl());
+fixture('Testing cli testcafe --full-page').page(getBaseUrl());
 
 test('should care arg', async t => {
   const basePath = join('e2e', 'screens', 'Testing_cli');
