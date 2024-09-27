@@ -1,3 +1,5 @@
+import { t } from 'testcafe';
+
 import { spawn } from 'node:child_process';
 import process from 'node:process';
 
@@ -6,7 +8,8 @@ import process from 'node:process';
 process.env.WINDOW_DPI = process.env.WINDOW_DPI || '2';
 
 function getBaseUrl() {
-  return `${process.env.BASE_URL}/`;
+  const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+  return `${baseUrl}/`;
 }
 
 function fixedSize(value) {
@@ -33,7 +36,9 @@ function callNpx(args) {
 }
 
 function callTC(targetTest, additionalArgs) {
-  const browser = process.env.BROWSER != null ? process.env.BROWSER : 'chrome:headless';
+  const browser = (process.env.BROWSER != null ? process.env.BROWSER : null)
+    || ((t.browser || {}).alias != null ? t.browser.alias : null)
+    || 'chrome:headless';
   const baseArgs = ['testcafe', browser, targetTest, '-s', 'path=e2e/screens', '-q'];
   return callNpx(baseArgs.concat(additionalArgs));
 }
