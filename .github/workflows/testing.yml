@@ -15,8 +15,6 @@ jobs:
       # XXX: adjust to node 18's defaults changes
       #      https://stackoverflow.com/questions/77142563/nodejs-18-breaks-dns-resolution-of-localhost-from-127-0-0-1-to-1
       NODE_OPTIONS: --dns-result-order=ipv4first
-      BASE_URL: http://localhost:3000
-      BROWSER: ${{ matrix.env.browser }}
       WINDOW_DPI: 1
     steps:
       - uses: actions/checkout@v4
